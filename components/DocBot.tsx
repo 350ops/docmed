@@ -1,7 +1,8 @@
+"use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, X, Bot, User, Loader2, Shield } from 'lucide-react';
-import { getHealthAssistance } from '../geminiService';
+import { MessageSquare, Send, X, Bot, Loader2, Shield } from 'lucide-react';
+import { getHealthAssistance } from '@/lib/geminiService';
 
 const DocBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +28,7 @@ const DocBot: React.FC = () => {
     setIsLoading(true);
 
     const response = await getHealthAssistance(userMsg);
-    
+
     setMessages(prev => [...prev, { role: 'bot', text: response }]);
     setIsLoading(false);
   };
@@ -65,17 +66,16 @@ const DocBot: React.FC = () => {
             </button>
           </div>
 
-          <div 
+          <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/50 scroll-smooth"
           >
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${
-                  msg.role === 'user' 
-                    ? 'bg-doctoralia-teal text-white rounded-br-none shadow-lg shadow-teal-100' 
+                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
+                    ? 'bg-doctoralia-teal text-white rounded-br-none shadow-lg shadow-teal-100'
                     : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-none'
-                }`}>
+                  }`}>
                   {msg.text}
                 </div>
               </div>
@@ -84,9 +84,9 @@ const DocBot: React.FC = () => {
               <div className="flex justify-start">
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3">
                   <div className="flex gap-1">
-                     <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce"></span>
-                     <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                     <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                    <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce"></span>
+                    <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span className="w-1.5 h-1.5 bg-doctoralia-teal rounded-full animate-bounce [animation-delay:0.4s]"></span>
                   </div>
                   <span className="text-xs text-gray-400 font-medium">Escribiendo...</span>
                 </div>
@@ -95,7 +95,7 @@ const DocBot: React.FC = () => {
           </div>
 
           <div className="p-5 bg-white border-t border-gray-100">
-            <form 
+            <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="flex items-center gap-3"
             >
@@ -106,7 +106,7 @@ const DocBot: React.FC = () => {
                 placeholder="Describe tus síntomas..."
                 className="flex-1 bg-gray-100 border-none outline-none p-4 rounded-2xl text-sm focus:bg-gray-200 transition-colors"
               />
-              <button 
+              <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
                 className="bg-doctoralia-teal text-white p-4 rounded-2xl hover:bg-[#00af94] disabled:opacity-50 transition-all shadow-lg shadow-teal-100 active:scale-95"
@@ -115,9 +115,9 @@ const DocBot: React.FC = () => {
               </button>
             </form>
             <div className="flex items-center justify-center gap-1.5 mt-4 opacity-50">
-               {/* Added Shield to imports and fixed the missing name error */}
-               <Shield className="w-3 h-3 text-gray-400" />
-               <p className="text-[10px] text-gray-400 font-medium text-center">IA de orientación médica. Tus datos están cifrados.</p>
+              {/* Added Shield to imports and fixed the missing name error */}
+              <Shield className="w-3 h-3 text-gray-400" />
+              <p className="text-[10px] text-gray-400 font-medium text-center">IA de orientación médica. Tus datos están cifrados.</p>
             </div>
           </div>
         </div>

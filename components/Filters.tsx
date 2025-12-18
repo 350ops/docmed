@@ -1,6 +1,7 @@
+"use client";
 
 import React from 'react';
-import { INSURANCES, SPECIALTIES } from '../constants';
+import { INSURANCES, SPECIALTIES } from '@/lib/constants';
 
 interface FiltersProps {
   onFilterChange: (filters: any) => void;
@@ -11,11 +12,11 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     <aside className="w-full lg:w-64 flex-shrink-0 space-y-8">
       <div>
         <h4 className="text-lg font-bold text-gray-900 mb-4">Filtrar por</h4>
-        
+
         <div className="space-y-6">
           <section>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Especialidad</label>
-            <select 
+            <select
               className="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-doctoralia-teal/20 transition"
               onChange={(e) => onFilterChange({ specialty: e.target.value })}
             >
@@ -29,8 +30,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
               {INSURANCES.map(ins => (
                 <label key={ins} className="flex items-center gap-3 group cursor-pointer">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     className="w-5 h-5 rounded border-gray-300 text-doctoralia-teal focus:ring-doctoralia-teal"
                     onChange={(e) => onFilterChange({ insurance: ins, checked: e.target.checked })}
                   />

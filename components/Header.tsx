@@ -1,3 +1,4 @@
+"use client";
 
 import React from 'react';
 import { User, Menu, Search, Calendar, ChevronDown } from 'lucide-react';
@@ -16,7 +17,7 @@ const Header: React.FC = () => {
                 doctor<span className="text-doctoralia-teal">connect</span>
               </span>
             </a>
-            
+
             <nav className="hidden md:flex items-center space-x-6">
               <a href="#" className="text-gray-600 hover:text-doctoralia-teal font-medium">Especialidades</a>
               <a href="#" className="text-gray-600 hover:text-doctoralia-teal font-medium">Enfermedades</a>

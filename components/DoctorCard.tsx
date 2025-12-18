@@ -1,7 +1,8 @@
+"use client";
 
 import React from 'react';
 import { Star, MapPin, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
-import { Doctor } from '../types';
+import { Doctor } from '@/types';
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -13,9 +14,9 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 mb-4 flex flex-col lg:flex-row gap-6">
       <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
         <div className="relative">
-          <img 
-            src={doctor.image} 
-            alt={doctor.name} 
+          <img
+            src={doctor.image}
+            alt={doctor.name}
             className="w-24 h-24 rounded-2xl object-cover mb-4 ring-2 ring-gray-50"
           />
           {doctor.isVerified && (
@@ -26,7 +27,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
         </div>
         <h3 className="text-xl font-bold text-gray-900">{doctor.name}</h3>
         <p className="text-doctoralia-teal font-semibold text-sm mb-2">{doctor.specialty}</p>
-        
+
         <div className="flex items-center gap-1 mb-2">
           <div className="flex text-yellow-400">
             {[...Array(5)].map((_, i) => (
@@ -41,7 +42,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
           <MapPin className="w-4 h-4" />
           <span>{doctor.address}</span>
         </div>
-        
+
         <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
           <ShieldCheck className="w-4 h-4" />
           <span>Acepta {doctor.insurances.join(', ')}</span>
@@ -59,7 +60,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
           <Clock className="w-4 h-4" />
           Proxima disponibilidad: Hoy
         </div>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {doctor.availability.map((slot, idx) => {
             const date = new Date(slot);
@@ -82,7 +83,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
             Ver más →
           </button>
         </div>
-        
+
         <div className="mt-6 border-t border-gray-100 pt-4 text-sm text-gray-500">
           <p className="line-clamp-2 italic">"{doctor.bio}"</p>
         </div>

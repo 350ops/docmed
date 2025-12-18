@@ -1,7 +1,8 @@
+"use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Loader2, History, TrendingUp, X } from 'lucide-react';
-import { SPECIALTIES } from '../constants';
+import { SPECIALTIES } from '@/lib/constants';
 
 interface SearchBarProps {
   onSearch: (specialty: string, location: string) => void;
@@ -59,8 +60,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto relative" ref={dropdownRef}>
-      <form 
-        onSubmit={handleSubmit} 
+      <form
+        onSubmit={handleSubmit}
         className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl overflow-visible p-2 gap-2 relative z-20 border border-gray-100"
       >
         <div className="flex-1 flex items-center px-4 bg-gray-50 rounded-xl border border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
@@ -77,8 +78,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
             onFocus={() => setShowSuggestions(true)}
           />
           {specialty && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setSpecialty('')}
               className="p-1 hover:bg-gray-200 rounded-full text-gray-400"
             >
@@ -86,7 +87,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
             </button>
           )}
         </div>
-        
+
         <div className="hidden md:flex w-px h-10 bg-gray-200 self-center"></div>
 
         <div className="flex-1 flex items-center px-4 bg-gray-50 rounded-xl border border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
@@ -168,19 +169,19 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
               </div>
             )}
           </div>
-          
+
           <div className="bg-gray-50 p-3 flex items-center justify-between border-t border-gray-100">
-             <span className="text-[10px] text-gray-400 font-bold uppercase">DoctorConnect Sugiere</span>
-             <TrendingUp className="w-3 h-3 text-doctoralia-teal" />
+            <span className="text-[10px] text-gray-400 font-bold uppercase">DoctorConnect Sugiere</span>
+            <TrendingUp className="w-3 h-3 text-doctoralia-teal" />
           </div>
         </div>
       )}
-      
+
       <div className="mt-4 flex flex-wrap gap-2 justify-center">
         <span className="text-gray-500 text-sm py-1 font-medium">Sugerencias:</span>
         {SPECIALTIES.slice(0, 4).map(s => (
-          <button 
-            key={s} 
+          <button
+            key={s}
             type="button"
             onClick={() => handleSuggestionClick(s)}
             className="bg-white border border-gray-200 text-gray-600 text-xs font-bold hover:border-doctoralia-teal hover:text-doctoralia-teal px-3 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
