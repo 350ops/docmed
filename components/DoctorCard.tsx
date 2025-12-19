@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Star, MapPin, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
 import { Doctor } from '@/types';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth-context';
 import AuthModal from './AuthModal';
 
 interface DoctorCardProps {

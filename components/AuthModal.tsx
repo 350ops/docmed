@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, MapPin, Loader2 } from 'lucide-react';
-import { useAuth } from '@/lib/auth';
-
+import { useAuth } from '@/lib/auth-context';
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;

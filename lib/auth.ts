@@ -39,6 +39,8 @@ export function getDoctorById(id: string): Doctor | undefined {
 
 // Update a doctor's profile
 export function updateDoctor(updatedDoctor: Doctor): Doctor {
+    if (typeof window === "undefined") return updatedDoctor;
+
     const doctors = getDoctors();
     const index = doctors.findIndex((d) => d.id === updatedDoctor.id);
     if (index !== -1) {
@@ -50,6 +52,8 @@ export function updateDoctor(updatedDoctor: Doctor): Doctor {
 
 // Login function
 export function login(email: string, password: string): Doctor | null {
+    if (typeof window === "undefined") return null;
+
     const cred = MOCK_CREDENTIALS[email.toLowerCase()];
     if (!cred || cred.password !== password) {
         return null;
@@ -65,6 +69,7 @@ export function login(email: string, password: string): Doctor | null {
 
 // Logout function
 export function logout(): void {
+    if (typeof window === "undefined") return;
     localStorage.removeItem(AUTH_KEY);
 }
 
