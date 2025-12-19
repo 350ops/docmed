@@ -11,6 +11,7 @@ import Favorite from './Favorite';
 const { width: windowWidth } = Dimensions.get('window');
 interface CardProps {
     title: string;
+    subtitle?: string;
     description?: string;
     hasShadow?: boolean;
     image: string | ImageSourcePropType;
@@ -28,7 +29,7 @@ interface CardProps {
     iconColor?: string;
     imageHeight?: number;
     showOverlay?: boolean;
-    hasFavorite?: boolean;  
+    hasFavorite?: boolean;
     overlayGradient?: readonly [string, string];
     width?: any;
     rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
@@ -38,6 +39,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({
     title,
+    subtitle,
     description,
     image,
     hasShadow = false,
@@ -111,15 +113,15 @@ const Card: React.FC<CardProps> = ({
     const renderContent = () => {
 
         const cardContent = (
-            <View 
-            
-            className={`flex-1 ${className}`} 
-            style={[
-                hasShadow && { 
-                    ...shadowPresets.small
-                },
-                style
-            ]}>
+            <View
+
+                className={`flex-1 ${className}`}
+                style={[
+                    hasShadow && {
+                        ...shadowPresets.small
+                    },
+                    style
+                ]}>
                 <View className="relative">
                     {hasFavorite && (
                         <View className='absolute top-3 right-3 z-50'>
@@ -175,6 +177,11 @@ const Card: React.FC<CardProps> = ({
 
 
                         <ThemedText className="text-sm font-medium">{title}</ThemedText>
+                        {subtitle && (
+                            <ThemedText numberOfLines={1} className="text-xs text-gray-500 dark:text-gray-300">
+                                {subtitle}
+                            </ThemedText>
+                        )}
 
                         {description && (
                             <ThemedText numberOfLines={1} className="text-xs mb-px text-gray-500 dark:text-gray-300">
@@ -188,7 +195,7 @@ const Card: React.FC<CardProps> = ({
                                 {renderRating()}
                             </View>
                         )}
-                        
+
                         {button && (
                             <Button
                                 className='mt-3'

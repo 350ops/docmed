@@ -24,7 +24,6 @@ const SearchBar = (props: any) => {
             <View className='px-global bg-light-primary dark:bg-dark-primary w-full relative z-50'>
                 <Pressable className="" onPress={() => setShowModal(true)}>
                     <Animated.View
-                        sharedTransitionTag="searchBar"
                         style={{ elevation: 10, height: 50, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8.84, shadowOffset: { width: 0, height: 0 } }}
                         className='bg-light-primary flex-row justify-center items-center relative z-50 py-4 px-10 mt-3 mb-4 dark:bg-white/20 rounded-full'>
                         <Icon name="Search" size={16} strokeWidth={3} className="text-teal-500" />
@@ -166,7 +165,7 @@ const SpecialtySearch = ({ searchQuery, setSearchQuery }: { searchQuery: string,
                 <TextInput
                     className='p-4 pl-12 mt-4 border border-teal-300 dark:border-teal-700 rounded-xl text-black dark:text-white'
                     placeholder='Buscar especialidad o médico...'
-                    placeholderTextColor={colors.subtext}
+                    placeholderTextColor={colors.placeholder}
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
@@ -194,7 +193,7 @@ const LocationSearch = () => {
                 <TextInput
                     className='p-4 pl-12 mt-4 border border-teal-300 dark:border-teal-700 rounded-xl text-black dark:text-white'
                     placeholder='Ciudad o código postal'
-                    placeholderTextColor={colors.subtext}
+                    placeholderTextColor={colors.placeholder}
                 />
             </View>
             <ThemedText className='text-xs mt-4 text-light-subtext dark:text-dark-subtext'>Sugerencias</ThemedText>
