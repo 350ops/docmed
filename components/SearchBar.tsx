@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Loader2, History, TrendingUp, X } from 'lucide-react';
+import { Search, Loader2, History, TrendingUp, X, MapPin } from 'lucide-react';
 import { SPECIALTIES } from '@/lib/constants';
 
 interface SearchBarProps {
-  onSearch: (specialty: string, location: string) => void;
+  onSearch: (specialty: string) => void;
   isLoading?: boolean;
+  detectedCity?: string | null;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity }) => {
   const [specialty, setSpecialty] = useState('');
-  const [location, setLocation] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,33 +42,41 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    onSearch(specialty, location);
+    onSearch(specialty);
     saveToHistory(specialty);
     setShowSuggestions(false);
   };
 
   const handleSuggestionClick = (term: string) => {
     setSpecialty(term);
-    onSearch(term, location);
+    onSearch(term);
     saveToHistory(term);
     setShowSuggestions(false);
   };
 
   const filteredSuggestions = SPECIALTIES.filter(s =>
     s.toLowerCase().includes(specialty.toLowerCase())
-  ).slice(0, 5);
+  ).slice(0, 8);
 
   return (
-    <div className="w-full max-w-4xl mx-auto relative" ref={dropdownRef}>
+    <div className="w-full max-w-3xl mx-auto relative" ref={dropdownRef}>
+      {/* Location indicator */}
+      {detectedCity && (
+        <div className="flex items-center justify-center gap-2 mb-4 text-sm text-gray-600">
+          <MapPin className="w-4 h-4 text-doctoralia-teal" />
+          <span>Mostrando especialistas en <strong className="text-doctoralia-teal">{detectedCity}</strong></span>
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl overflow-visible p-2 gap-2 relative z-20 border border-gray-100"
+        className="flex flex-col sm:flex-row bg-white rounded-2xl shadow-2xl overflow-visible p-2 gap-2 relative z-20 border border-gray-100"
       >
         <div className="flex-1 flex items-center px-4 bg-gray-50 rounded-xl border border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
           <Search className="text-gray-400 w-5 h-5 mr-3 group-focus-within:text-doctoralia-teal" />
           <input
             type="text"
-            placeholder="Especialidad, médico, centro..."
+            placeholder="Buscar especialidad médica..."
             className="w-full py-4 bg-transparent outline-none text-gray-800 font-medium placeholder:text-gray-400"
             value={specialty}
             onChange={(e) => {
@@ -88,19 +96,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
           )}
         </div>
 
-        <div className="hidden md:flex w-px h-10 bg-gray-200 self-center"></div>
-
-        <div className="flex-1 flex items-center px-4 bg-gray-50 rounded-xl border border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
-          <MapPin className="text-gray-400 w-5 h-5 mr-3 group-focus-within:text-doctoralia-teal" />
-          <input
-            type="text"
-            placeholder="Ciudad, código postal..."
-            className="w-full py-4 bg-transparent outline-none text-gray-800 font-medium placeholder:text-gray-400"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-        </div>
-
         <button
           type="submit"
           disabled={isLoading}
@@ -112,8 +107,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
 
       {/* Suggestions Dropdown */}
       {showSuggestions && (specialty.length > 0 || recentSearches.length > 0) && (
-        <div className="absolute top-full left-0 w-full md:w-1/2 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-30 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="p-2">
+        <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-30 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-2 max-h-80 overflow-y-auto">
             {specialty.length === 0 && recentSearches.length > 0 && (
               <div className="mb-2">
                 <div className="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
@@ -136,7 +131,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
             {specialty.length > 0 && (
               <div>
                 <div className="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <TrendingUp className="w-3 h-3" /> Sugerencias
+                  <TrendingUp className="w-3 h-3" /> Especialidades
                 </div>
                 {filteredSuggestions.length > 0 ? (
                   filteredSuggestions.map((term, i) => {
@@ -163,7 +158,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
                   })
                 ) : (
                   <div className="px-4 py-4 text-sm text-gray-500 italic">
-                    No hay sugerencias para "{specialty}"
+                    No hay especialidades que coincidan con "{specialty}"
                   </div>
                 )}
               </div>
@@ -171,15 +166,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
           </div>
 
           <div className="bg-gray-50 p-3 flex items-center justify-between border-t border-gray-100">
-            <span className="text-[10px] text-gray-400 font-bold uppercase">DoctorConnect Sugiere</span>
+            <span className="text-[10px] text-gray-400 font-bold uppercase">Especialidades médicas</span>
             <TrendingUp className="w-3 h-3 text-doctoralia-teal" />
           </div>
         </div>
       )}
 
       <div className="mt-4 flex flex-wrap gap-2 justify-center">
-        <span className="text-gray-500 text-sm py-1 font-medium">Sugerencias:</span>
-        {SPECIALTIES.slice(0, 4).map(s => (
+        <span className="text-gray-500 text-sm py-1 font-medium">Populares:</span>
+        {SPECIALTIES.slice(0, 5).map(s => (
           <button
             key={s}
             type="button"

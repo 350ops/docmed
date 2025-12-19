@@ -7,35 +7,52 @@ import DoctorCard from '@/components/DoctorCard';
 import Filters from '@/components/Filters';
 import DocBot from '@/components/DocBot';
 import { MOCK_DOCTORS } from '@/lib/constants';
+import { getLocationFromIP } from '@/lib/geolocation';
 import { Doctor } from '@/types';
 import { Search, Heart, Shield, Globe, CheckCircle } from 'lucide-react';
 
 export default function Home() {
     const [doctors, setDoctors] = useState<Doctor[]>(MOCK_DOCTORS);
     const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>(MOCK_DOCTORS);
-    const [searchQuery, setSearchQuery] = useState({ specialty: '', location: '' });
+    const [searchQuery, setSearchQuery] = useState({ specialty: '' });
     const [isSearching, setIsSearching] = useState(false);
     const [bookingSuccess, setBookingSuccess] = useState<string | null>(null);
-    const [userLocation, setUserLocation] = useState<string | null>(null);
+    const [userCity, setUserCity] = useState<string | null>(null);
+    const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
-    // Attempt to get user location on mount
+    // Get user location from IP on mount
     useEffect(() => {
-        if (typeof window !== 'undefined' && "geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    console.log("Location found:", position.coords.latitude, position.coords.longitude);
-                    setUserLocation("Cerca de ti");
-                },
-                (error) => {
-                    console.log("Location access denied or unavailable.");
+        const fetchLocation = async () => {
+            try {
+                const location = await getLocationFromIP();
+                if (location && location.city) {
+                    setUserCity(location.city);
+                    console.log("Location detected from IP:", location.city);
+
+                    // Filter doctors by detected city
+                    const cityDoctors = MOCK_DOCTORS.filter(doc =>
+                        doc.city.toLowerCase().includes(location.city.toLowerCase()) ||
+                        doc.location.toLowerCase().includes(location.city.toLowerCase())
+                    );
+
+                    // If we have doctors in that city, show them; otherwise show all
+                    if (cityDoctors.length > 0) {
+                        setFilteredDoctors(cityDoctors);
+                    }
                 }
-            );
-        }
+            } catch (error) {
+                console.log("Could not detect location from IP");
+            } finally {
+                setIsLoadingLocation(false);
+            }
+        };
+
+        fetchLocation();
     }, []);
 
-    const handleSearch = (specialty: string, location: string) => {
+    const handleSearch = (specialty: string) => {
         setIsSearching(true);
-        setSearchQuery({ specialty, location });
+        setSearchQuery({ specialty });
 
         setTimeout(() => {
             const results = MOCK_DOCTORS.filter(doc => {
@@ -44,15 +61,17 @@ export default function Home() {
                     doc.name.toLowerCase().includes(specialty.toLowerCase()) ||
                     doc.bio.toLowerCase().includes(specialty.toLowerCase());
 
-                const matchesLocation = !location ||
-                    doc.location.toLowerCase().includes(location.toLowerCase()) ||
-                    doc.city.toLowerCase().includes(location.toLowerCase()) ||
-                    doc.address.toLowerCase().includes(location.toLowerCase());
+                // If we have a detected city, also filter by location
+                const matchesLocation = !userCity ||
+                    doc.location.toLowerCase().includes(userCity.toLowerCase()) ||
+                    doc.city.toLowerCase().includes(userCity.toLowerCase());
 
-                return matchesSpecialty && matchesLocation;
+                // If no specialty is entered, show doctors in user's city (if detected)
+                // If specialty is entered, show all matching doctors regardless of location
+                return specialty ? matchesSpecialty : (matchesSpecialty && matchesLocation);
             });
 
-            setFilteredDoctors(results);
+            setFilteredDoctors(results.length > 0 ? results : MOCK_DOCTORS);
             setIsSearching(false);
 
             const resultsElement = document.getElementById('results-section');
@@ -104,7 +123,7 @@ export default function Home() {
                         Más de 120.000 profesionales de la salud están listos para ayudarte. Opiniones reales, reservas 24/7.
                     </p>
 
-                    <SearchBar onSearch={handleSearch} isLoading={isSearching} />
+                    <SearchBar onSearch={handleSearch} isLoading={isSearching} detectedCity={userCity} />
 
                     <div className="mt-12 flex flex-wrap justify-center gap-8 text-gray-500 font-medium">
                         <div className="flex items-center gap-2 px-4 py-2 bg-white/50 rounded-full border border-gray-100 shadow-sm">
@@ -152,11 +171,11 @@ export default function Home() {
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                                     {filteredDoctors.length} especialistas encontrados
-                                    {userLocation && <span className="text-sm font-normal text-doctoralia-teal bg-teal-50 px-2 py-0.5 rounded-full">{userLocation}</span>}
+                                    {userCity && <span className="text-sm font-normal text-doctoralia-teal bg-teal-50 px-2 py-0.5 rounded-full">en {userCity}</span>}
                                 </h2>
                                 <p className="text-gray-500 mt-1">
-                                    {(searchQuery.specialty || searchQuery.location) ?
-                                        `Resultados para "${searchQuery.specialty || 'Especialistas'}" en ${searchQuery.location || 'toda España'}` :
+                                    {searchQuery.specialty ?
+                                        `Resultados para "${searchQuery.specialty}"${userCity ? ` en ${userCity}` : ''}` :
                                         "Especialistas destacados para ti"}
                                 </p>
                             </div>
@@ -220,7 +239,7 @@ export default function Home() {
                                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Vaya, no hemos encontrado resultados</h3>
                                 <p className="text-gray-500 mb-8 max-w-sm">Prueba a usar términos más generales o limpia los filtros para ver todos los especialistas disponibles.</p>
                                 <button
-                                    onClick={() => handleSearch('', '')}
+                                    onClick={() => handleSearch('')}
                                     className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-gray-800 transition"
                                 >
                                     Ver todos los profesionales
