@@ -309,7 +309,7 @@ export default function PrivacyPolicyPage() {
                                 </p>
                                 <div className="p-6 bg-gray-50 rounded-2xl">
                                     <p className="font-semibold text-gray-900 mb-2">
-                                        DoctorConnect Spain S.L.
+                                        CareSalud Spain S.L.
                                     </p>
                                     <p>Email: privacidad@doctorconnect.es</p>
                                     <p>Dirección: Calle de la Salud, 123, 28001 Madrid</p>
@@ -350,7 +350,7 @@ export default function PrivacyPolicyPage() {
             {/* Footer */}
             <footer className="bg-white border-t border-gray-100 py-8">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-                    <p>© 2024 DoctorConnect Spain S.L. Todos los derechos reservados.</p>
+                    <p>© 2024 CareSalud Spain S.L. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

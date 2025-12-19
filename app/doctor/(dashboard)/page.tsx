@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getCurrentDoctor } from "@/lib/auth";
+import { getCurrentDoctor } from "@/lib/doctor-auth";
 import { Doctor } from "@/types";
-import { Calendar, Star, Eye, TrendingUp, Users, Clock } from "lucide-react";
+import { Calendar as CalendarIcon, Star, Eye, TrendingUp, Users, Clock, Plus, ChevronRight } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function DoctorDashboardPage() {
     const [doctor, setDoctor] = useState<Doctor | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
     useEffect(() => {
         const current = getCurrentDoctor();
@@ -20,8 +25,8 @@ export default function DoctorDashboardPage() {
             label: "Citas este mes",
             value: "24",
             change: "+12%",
-            icon: Calendar,
-            color: "bg-blue-500",
+            icon: CalendarIcon,
+            color: "bg-primary",
         },
         {
             label: "Valoración media",
@@ -47,102 +52,172 @@ export default function DoctorDashboardPage() {
     ];
 
     const upcomingAppointments = [
-        { patient: "María García", time: "10:00", type: "Consulta general" },
-        { patient: "Carlos López", time: "11:30", type: "Seguimiento" },
-        { patient: "Ana Fernández", time: "12:00", type: "Primera visita" },
+        { patient: "María García", time: "10:00", type: "Consulta general", status: "confirmed" },
+        { patient: "Carlos López", time: "11:30", type: "Seguimiento", status: "confirmed" },
+        { patient: "Ana Fernández", time: "12:00", type: "Primera visita", status: "pending" },
+        { patient: "Pedro Martínez", time: "16:00", type: "Revisión", status: "confirmed" },
+    ];
+
+    // Mock dates with appointments
+    const appointmentDates = [
+        new Date(),
+        new Date(Date.now() + 86400000),
+        new Date(Date.now() + 86400000 * 2),
+        new Date(Date.now() + 86400000 * 5),
     ];
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
             {/* Welcome Header */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    ¡Bienvenido/a, {doctor.name.split(" ")[0]}! 👋
-                </h1>
-                <p className="text-gray-500">
-                    Aquí tienes un resumen de tu actividad reciente
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        ¡Bienvenido/a, {doctor.name.split(" ")[0]}! 👋
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Aquí tienes un resumen de tu actividad reciente
+                    </p>
+                </div>
+                <Button className="gap-2">
+                    <Plus className="w-4 h-4" />
+                    Nueva cita
+                </Button>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat, idx) => {
                     const Icon = stat.icon;
                     return (
-                        <div
-                            key={idx}
-                            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`${stat.color} p-3 rounded-xl text-white`}>
-                                    <Icon className="w-5 h-5" />
+                        <Card key={idx} className="hover:shadow-lg transition-shadow">
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className={`${stat.color} p-3 rounded-xl text-white`}>
+                                        <Icon className="w-5 h-5" />
+                                    </div>
+                                    <Badge variant="secondary" className="text-green-600 bg-green-50">
+                                        <TrendingUp className="w-3 h-3 mr-1" />
+                                        {stat.change}
+                                    </Badge>
                                 </div>
-                                <span className="text-green-600 text-sm font-semibold flex items-center gap-1">
-                                    <TrendingUp className="w-4 h-4" />
-                                    {stat.change}
-                                </span>
-                            </div>
-                            <p className="text-3xl font-bold text-gray-900 mb-1">
-                                {stat.value}
-                            </p>
-                            <p className="text-sm text-gray-500">{stat.label}</p>
-                        </div>
+                                <p className="text-3xl font-bold text-gray-900 mb-1">
+                                    {stat.value}
+                                </p>
+                                <p className="text-sm text-muted-foreground">{stat.label}</p>
+                            </CardContent>
+                        </Card>
                     );
                 })}
             </div>
 
-            {/* Two Column Layout */}
-            <div className="grid lg:grid-cols-2 gap-6">
+            {/* Main Content Grid */}
+            <div className="grid lg:grid-cols-3 gap-6">
+                {/* Calendar */}
+                <Card className="lg:col-span-1">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <CalendarIcon className="w-5 h-5 text-primary" />
+                            Calendario
+                        </CardTitle>
+                        <CardDescription>Selecciona una fecha para ver las citas</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            className="rounded-xl border"
+                            modifiers={{
+                                hasAppointment: appointmentDates
+                            }}
+                            modifiersStyles={{
+                                hasAppointment: {
+                                    fontWeight: 'bold',
+                                    backgroundColor: 'hsl(var(--primary) / 0.1)',
+                                    color: 'hsl(var(--primary))'
+                                }
+                            }}
+                        />
+                        <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                            <div className="w-3 h-3 rounded-full bg-primary/20" />
+                            <span>Días con citas programadas</span>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* Upcoming Appointments */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-900">Próximas citas</h2>
-                        <a
-                            href="/doctor/appointments"
-                            className="text-doctoralia-teal font-semibold text-sm hover:underline"
-                        >
+                <Card className="lg:col-span-2">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Citas de hoy</CardTitle>
+                            <CardDescription>
+                                {selectedDate?.toLocaleDateString('es-ES', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long'
+                                })}
+                            </CardDescription>
+                        </div>
+                        <Button variant="outline" size="sm" className="gap-1">
                             Ver todas
-                        </a>
-                    </div>
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-3">
+                            {upcomingAppointments.map((apt, idx) => (
+                                <div
+                                    key={idx}
+                                    className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition group cursor-pointer"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition">
+                                            <Clock className="w-5 h-5 text-primary" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-gray-900">{apt.patient}</p>
+                                            <p className="text-sm text-muted-foreground">{apt.type}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right flex items-center gap-3">
+                                        <div>
+                                            <p className="font-bold text-gray-900">{apt.time}</p>
+                                            <Badge
+                                                variant={apt.status === 'confirmed' ? 'default' : 'secondary'}
+                                                className={apt.status === 'confirmed' ? 'bg-green-500' : 'bg-yellow-500'}
+                                            >
+                                                {apt.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
+                                            </Badge>
+                                        </div>
+                                        <ChevronRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
 
-                    <div className="space-y-4">
-                        {upcomingAppointments.map((apt, idx) => (
-                            <div
-                                key={idx}
-                                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-doctoralia-teal/10 rounded-full flex items-center justify-center">
-                                        <Clock className="w-5 h-5 text-doctoralia-teal" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold text-gray-900">{apt.patient}</p>
-                                        <p className="text-sm text-gray-500">{apt.type}</p>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-bold text-gray-900">Hoy</p>
-                                    <p className="text-sm text-doctoralia-teal font-semibold">
-                                        {apt.time}
-                                    </p>
-                                </div>
+                        {upcomingAppointments.length === 0 && (
+                            <div className="text-center py-12">
+                                <CalendarIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                                <p className="text-muted-foreground">No hay citas programadas para este día</p>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
 
-                {/* Quick Actions */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">
-                        Acciones rápidas
-                    </h2>
-
-                    <div className="grid grid-cols-2 gap-4">
+            {/* Quick Actions */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Acciones rápidas</CardTitle>
+                    <CardDescription>Accede rápidamente a las funciones más usadas</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <a
                             href="/doctor/profile"
-                            className="p-4 bg-teal-50 rounded-xl hover:bg-teal-100 transition text-center group"
+                            className="p-4 bg-primary/5 rounded-xl hover:bg-primary/10 transition text-center group"
                         >
-                            <div className="w-12 h-12 bg-doctoralia-teal rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                                 <svg
                                     className="w-6 h-6 text-white"
                                     fill="none"
@@ -165,7 +240,7 @@ export default function DoctorDashboardPage() {
                             className="p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition text-center group"
                         >
                             <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                                <Calendar className="w-6 h-6 text-white" />
+                                <CalendarIcon className="w-6 h-6 text-white" />
                             </div>
                             <p className="font-semibold text-gray-900">Gestionar agenda</p>
                         </a>
@@ -208,8 +283,8 @@ export default function DoctorDashboardPage() {
                             <p className="font-semibold text-gray-900">Configuración</p>
                         </a>
                     </div>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

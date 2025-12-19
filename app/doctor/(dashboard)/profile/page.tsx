@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getCurrentDoctor, updateDoctor } from "@/lib/auth";
+import { getCurrentDoctor, updateDoctor } from "@/lib/doctor-auth";
 import { Doctor } from "@/types";
 import {
     User,

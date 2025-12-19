@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/lib/auth";
+import { login } from "@/lib/doctor-auth";
 import { Search, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 
 export default function DoctorLoginPage() {

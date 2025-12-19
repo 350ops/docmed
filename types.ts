@@ -11,9 +11,21 @@ export interface Doctor {
   image: string;
   insurances: string[];
   bio: string;
-  availability: string[]; // Mocked ISO strings for available slots
+  availability: DayAvailability[]; // Weekly availability
   isVerified: boolean;
   address: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  languages?: string[];
+  education?: string;
+  experience?: number; // Years of experience
+}
+
+export interface DayAvailability {
+  date: string; // ISO date string (YYYY-MM-DD)
+  slots: string[]; // Array of time strings like "09:00", "10:30"
 }
 
 export interface SearchFilters {

@@ -60,7 +60,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2e$tsx__$5b$app$
 ;
 ;
 const metadata = {
-    title: "DoctorConnect | Encuentra tu especialista y pide cita",
+    title: "CareSalud | Encuentra tu especialista y pide cita",
     description: "Más de 120.000 profesionales de la salud están listos para ayudarte. Opiniones reales, reservas 24/7.",
     keywords: [
         "médico",

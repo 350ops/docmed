@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getCurrentDoctor, logout } from "@/lib/auth";
+import { getCurrentDoctor, logout } from "@/lib/doctor-auth";
 import { Doctor } from "@/types";
 import DoctorSidebar from "@/components/DoctorSidebar";
 import { Search, LogOut, Bell, Menu, X } from "lucide-react";

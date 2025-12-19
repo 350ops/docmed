@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Star, MapPin, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { Star, MapPin, ShieldCheck, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 import { Doctor } from '@/types';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/auth';
 import AuthModal from './AuthModal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -16,7 +19,8 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingSlot, setPendingSlot] = useState<string | null>(null);
 
-  const handleBookClick = (slot: string) => {
+  const handleBookClick = (date: string, time: string) => {
+    const slot = `${date}T${time}:00`;
     if (user) {
       onBook(doctor.id, slot);
     } else {
@@ -32,83 +36,136 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
     }
   };
 
+  // Get next 7 days for display
+  const getDisplayDays = () => {
+    const days: { date: Date; dateStr: string; dayName: string; dayNum: number; month: string }[] = [];
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      days.push({
+        date,
+        dateStr: date.toISOString().split('T')[0],
+        dayName: date.toLocaleDateString('es-ES', { weekday: 'short' }),
+        dayNum: date.getDate(),
+        month: date.toLocaleDateString('es-ES', { month: 'short' })
+      });
+    }
+    return days;
+  };
+
+  const displayDays = getDisplayDays();
+
+  const getSlotCount = (dateStr: string) => {
+    const day = doctor.availability.find(d => d.date === dateStr);
+    return day?.slots.length || 0;
+  };
+
+  const getFirstSlot = (dateStr: string) => {
+    const day = doctor.availability.find(d => d.date === dateStr);
+    return day?.slots[0];
+  };
+
   return (
     <>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 mb-4 flex flex-col lg:flex-row gap-6">
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-          <div className="relative">
-            <img
-              src={doctor.image}
-              alt={doctor.name}
-              className="w-24 h-24 rounded-2xl object-cover mb-4 ring-2 ring-gray-50"
-            />
-            {doctor.isVerified && (
-              <div className="absolute -top-2 -right-2 bg-doctoralia-teal text-white p-1 rounded-full shadow-sm">
-                <CheckCircle className="w-4 h-4" />
+      <div className="card-accent-teal bg-white border border-gray-100 shadow-sm card-lift p-5 mb-4">
+        <div className="flex flex-col lg:flex-row gap-5">
+          {/* Left side - Doctor info */}
+          <div className="flex gap-4 lg:w-1/3">
+            <Link href={`/doctor/${doctor.id}`} className="shrink-0">
+              <div className="relative">
+                <img
+                  src={doctor.image}
+                  alt={doctor.name}
+                  className="w-24 h-24 rounded-2xl object-cover shadow-md ring-2 ring-white hover:ring-primary transition-all"
+                />
+                {doctor.isVerified && (
+                  <div className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full shadow ring-2 ring-white">
+                    <CheckCircle className="w-3 h-3" />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <h3 className="text-xl font-bold text-gray-900">{doctor.name}</h3>
-          <p className="text-doctoralia-teal font-semibold text-sm mb-2">{doctor.specialty}</p>
+            </Link>
 
-          <div className="flex items-center gap-1 mb-2">
-            <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`w-4 h-4 fill-current ${i >= Math.floor(doctor.rating) ? 'text-gray-200' : ''}`} />
-              ))}
+            <div className="min-w-0">
+              <Link href={`/doctor/${doctor.id}`} className="hover:text-primary transition">
+                <h3 className="text-lg font-bold text-gray-900 truncate">{doctor.name}</h3>
+              </Link>
+              <p className="text-primary font-semibold text-sm">{doctor.specialty}</p>
+
+              <div className="flex items-center gap-1 mt-2">
+                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                <span className="text-sm font-bold text-gray-900">{doctor.rating}</span>
+                <span className="text-xs text-gray-400">({doctor.reviewCount})</span>
+              </div>
+
+              <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+                <MapPin className="w-3 h-3" />
+                <span className="truncate">{doctor.location}</span>
+              </div>
+
+              <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
+                <ShieldCheck className="w-3 h-3 text-primary" />
+                <span className="truncate">{doctor.insurances.slice(0, 2).join(', ')}</span>
+              </div>
             </div>
-            <span className="text-sm font-bold text-gray-700 ml-1">{doctor.rating}</span>
-            <span className="text-xs text-gray-500">({doctor.reviewCount} opiniones)</span>
           </div>
 
-          <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-            <MapPin className="w-4 h-4" />
-            <span>{doctor.address}</span>
-          </div>
+          {/* Right side - Availability Grid (Zocdoc style) */}
+          <div className="flex-1">
+            <div className="grid grid-cols-7 gap-1">
+              {displayDays.map((day, i) => {
+                const slotCount = getSlotCount(day.dateStr);
+                const firstSlot = getFirstSlot(day.dateStr);
+                const hasSlots = slotCount > 0;
 
-          <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Acepta {doctor.insurances.join(', ')}</span>
-          </div>
+                return (
+                  <div key={i} className="text-center">
+                    {/* Day header */}
+                    <div className="text-[10px] text-gray-400 uppercase font-medium mb-1">
+                      {day.dayName}
+                    </div>
+                    <div className="text-xs text-gray-500 mb-1">
+                      {day.month} {day.dayNum}
+                    </div>
 
-          <div className="flex flex-wrap gap-2 mt-auto">
-            <button className="text-doctoralia-teal font-semibold text-sm border border-doctoralia-teal px-4 py-2 rounded-lg hover:bg-teal-50 transition">
-              Ver perfil completo
-            </button>
-          </div>
-        </div>
+                    {/* Slot button */}
+                    {hasSlots ? (
+                      <button
+                        onClick={() => handleBookClick(day.dateStr, firstSlot!)}
+                        className="w-full py-2 px-1 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg transition text-xs font-semibold group"
+                      >
+                        <span className="group-hover:hidden">{slotCount}</span>
+                        <span className="hidden group-hover:inline">{firstSlot}</span>
+                      </button>
+                    ) : (
+                      <div className="w-full py-2 px-1 bg-gray-50 text-gray-300 rounded-lg text-xs">
+                        —
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
 
-        <div className="flex-1 flex flex-col">
-          <div className="flex items-center gap-2 mb-4 bg-blue-50 text-blue-700 p-3 rounded-xl text-sm font-medium">
-            <Clock className="w-4 h-4" />
-            Proxima disponibilidad: Hoy
-          </div>
+            {/* Next available indicator */}
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="bg-green-50 text-green-700 gap-1">
+                  <Clock className="w-3 h-3" />
+                  Próxima: Hoy
+                </Badge>
+                <span className="text-sm text-gray-500">{doctor.priceRange}</span>
+              </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {doctor.availability.map((slot, idx) => {
-              const date = new Date(slot);
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleBookClick(slot)}
-                  className="flex flex-col items-center py-2 px-3 border border-gray-200 rounded-xl hover:border-doctoralia-teal hover:bg-teal-50 transition"
-                >
-                  <span className="text-xs text-gray-500 capitalize">
-                    {date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })}
-                  </span>
-                  <span className="font-bold text-gray-800">
-                    {date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </button>
-              );
-            })}
-            <button className="flex items-center justify-center p-2 text-doctoralia-teal font-bold text-sm bg-teal-50 rounded-xl hover:bg-teal-100 transition">
-              Ver más →
-            </button>
-          </div>
-
-          <div className="mt-6 border-t border-gray-100 pt-4 text-sm text-gray-500">
-            <p className="line-clamp-2 italic">"{doctor.bio}"</p>
+              <Link href={`/doctor/${doctor.id}`}>
+                <Button variant="ghost" size="sm" className="gap-1 text-primary">
+                  Ver perfil
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -126,4 +183,3 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
 };
 
 export default DoctorCard;
-

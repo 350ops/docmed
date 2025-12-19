@@ -39,19 +39,6 @@ export default function DoctorSidebar() {
                     );
                 })}
             </nav>
-
-            {/* Pro Badge */}
-            <div className="absolute bottom-6 left-4 right-4">
-                <div className="bg-gradient-to-br from-doctoralia-teal to-teal-600 rounded-2xl p-4 text-white">
-                    <p className="font-bold text-sm mb-1">DoctorConnect Pro</p>
-                    <p className="text-xs text-teal-100 mb-3">
-                        Activa tu perfil premium para más visibilidad
-                    </p>
-                    <button className="w-full bg-white text-doctoralia-teal text-sm font-bold py-2 rounded-lg hover:bg-teal-50 transition">
-                        Más información
-                    </button>
-                </div>
-            </div>
         </aside>
     );
 }

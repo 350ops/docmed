@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Loader2, History, TrendingUp, X, MapPin } from 'lucide-react';
+import { Search, Loader2, History, TrendingUp, X, MapPin, Sparkles } from 'lucide-react';
 import { SPECIALTIES } from '@/lib/constants';
 
 interface SearchBarProps {
@@ -62,22 +62,24 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity
     <div className="w-full max-w-3xl mx-auto relative" ref={dropdownRef}>
       {/* Location indicator */}
       {detectedCity && (
-        <div className="flex items-center justify-center gap-2 mb-4 text-sm text-gray-600">
-          <MapPin className="w-4 h-4 text-doctoralia-teal" />
-          <span>Mostrando especialistas en <strong className="text-doctoralia-teal">{detectedCity}</strong></span>
+        <div className="flex items-center justify-center gap-2 mb-4 text-sm">
+          <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm">
+            <MapPin className="w-4 h-4 text-coral" />
+            <span className="text-gray-600">Especialistas en <strong className="text-gray-900">{detectedCity}</strong></span>
+          </div>
         </div>
       )}
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col sm:flex-row bg-white rounded-2xl shadow-2xl overflow-visible p-2 gap-2 relative z-20 border border-gray-100"
+        className="flex flex-col sm:flex-row bg-white rounded-3xl shadow-2xl overflow-visible p-2 gap-2 relative z-20 border border-gray-100"
       >
-        <div className="flex-1 flex items-center px-4 bg-gray-50 rounded-xl border border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
-          <Search className="text-gray-400 w-5 h-5 mr-3 group-focus-within:text-doctoralia-teal" />
+        <div className="flex-1 flex items-center px-5 bg-gray-50/50 rounded-2xl border-2 border-transparent focus-within:border-doctoralia-teal focus-within:bg-white transition-all group">
+          <Search className="text-gray-400 w-5 h-5 mr-3 group-focus-within:text-doctoralia-teal transition" />
           <input
             type="text"
-            placeholder="Buscar especialidad médica..."
-            className="w-full py-4 bg-transparent outline-none text-gray-800 font-medium placeholder:text-gray-400"
+            placeholder="¿Qué especialista necesitas?"
+            className="w-full py-4 bg-transparent outline-none text-gray-800 font-medium placeholder:text-gray-400 text-lg"
             value={specialty}
             onChange={(e) => {
               setSpecialty(e.target.value);
@@ -89,7 +91,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity
             <button
               type="button"
               onClick={() => setSpecialty('')}
-              className="p-1 hover:bg-gray-200 rounded-full text-gray-400"
+              className="p-2 hover:bg-gray-200 rounded-full text-gray-400 transition"
             >
               <X className="w-4 h-4" />
             </button>
@@ -99,16 +101,21 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-doctoralia-teal hover:bg-[#00af94] text-white px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 min-w-[140px] shadow-lg shadow-teal-100 active:scale-95"
+          className="btn-coral px-10 py-4 rounded-2xl flex items-center justify-center gap-2 min-w-[160px] shadow-lg shadow-coral-100"
         >
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Buscar'}
+          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+            <>
+              <Search className="w-5 h-5" />
+              Buscar
+            </>
+          )}
         </button>
       </form>
 
       {/* Suggestions Dropdown */}
       {showSuggestions && (specialty.length > 0 || recentSearches.length > 0) && (
-        <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-30 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="p-2 max-h-80 overflow-y-auto">
+        <div className="absolute top-full left-0 w-full mt-3 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-30 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-2 max-h-80 overflow-y-auto custom-scrollbar">
             {specialty.length === 0 && recentSearches.length > 0 && (
               <div className="mb-2">
                 <div className="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
@@ -119,7 +126,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity
                     key={i}
                     type="button"
                     onClick={() => handleSuggestionClick(term)}
-                    className="w-full text-left px-4 py-3 hover:bg-teal-50 flex items-center gap-3 transition-colors group"
+                    className="w-full text-left px-4 py-3 hover:bg-teal-50 flex items-center gap-3 transition-colors group rounded-xl"
                   >
                     <History className="w-4 h-4 text-gray-300 group-hover:text-doctoralia-teal" />
                     <span className="text-gray-700 font-medium">{term}</span>
@@ -145,41 +152,42 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading, detectedCity
                         key={i}
                         type="button"
                         onClick={() => handleSuggestionClick(term)}
-                        className="w-full text-left px-4 py-3 hover:bg-teal-50 flex items-center gap-3 transition-colors group border-b border-gray-50 last:border-none"
+                        className="w-full text-left px-4 py-3 hover:bg-teal-50 flex items-center gap-3 transition-colors group rounded-xl"
                       >
                         <Search className="w-4 h-4 text-gray-300 group-hover:text-doctoralia-teal" />
                         <span className="text-gray-700 font-medium">
                           {before}
-                          <span className="text-doctoralia-teal font-bold">{match}</span>
+                          <span className="text-coral font-bold">{match}</span>
                           {after}
                         </span>
                       </button>
                     );
                   })
                 ) : (
-                  <div className="px-4 py-4 text-sm text-gray-500 italic">
-                    No hay especialidades que coincidan con "{specialty}"
+                  <div className="px-4 py-4 text-sm text-gray-500 italic flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-coral" />
+                    No encontramos "{specialty}" — prueba otra búsqueda
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          <div className="bg-gray-50 p-3 flex items-center justify-between border-t border-gray-100">
-            <span className="text-[10px] text-gray-400 font-bold uppercase">Especialidades médicas</span>
-            <TrendingUp className="w-3 h-3 text-doctoralia-teal" />
+          <div className="bg-gray-50/50 p-3 flex items-center justify-between border-t border-gray-100">
+            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Especialidades médicas</span>
+            <TrendingUp className="w-3 h-3 text-coral" />
           </div>
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2 justify-center">
-        <span className="text-gray-500 text-sm py-1 font-medium">Populares:</span>
+      <div className="mt-6 flex flex-wrap gap-2 justify-center">
+        <span className="text-gray-400 text-sm py-1.5 font-medium">Populares:</span>
         {SPECIALTIES.slice(0, 5).map(s => (
           <button
             key={s}
             type="button"
             onClick={() => handleSuggestionClick(s)}
-            className="bg-white border border-gray-200 text-gray-600 text-xs font-bold hover:border-doctoralia-teal hover:text-doctoralia-teal px-3 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
+            className="bg-white border border-gray-200 text-gray-600 text-sm font-semibold hover:border-coral hover:text-coral px-4 py-1.5 rounded-full transition-all shadow-sm active:scale-95"
           >
             {s}
           </button>

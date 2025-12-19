@@ -38,7 +38,7 @@ export default function TermsOfServicePage() {
                     </h1>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                         Condiciones generales que rigen el uso de la plataforma
-                        DoctorConnect.
+                        CareSalud.
                     </p>
                     <p className="mt-4 text-sm text-gray-500">
                         Última actualización: Diciembre 2024
@@ -52,7 +52,7 @@ export default function TermsOfServicePage() {
                     {/* Intro */}
                     <div className="mb-12 p-6 bg-teal-50 rounded-2xl border border-teal-100">
                         <p className="text-teal-800">
-                            Al acceder y utilizar DoctorConnect, aceptas estos términos de
+                            Al acceder y utilizar CareSalud, aceptas estos términos de
                             uso. Por favor, léelos detenidamente antes de utilizar nuestros
                             servicios.
                         </p>
@@ -68,13 +68,13 @@ export default function TermsOfServicePage() {
                                 Objeto del servicio
                             </h2>
                             <p className="mb-4">
-                                DoctorConnect es una plataforma que facilita la conexión entre
+                                CareSalud es una plataforma que facilita la conexión entre
                                 pacientes y profesionales de la salud, permitiendo la búsqueda
                                 de especialistas, visualización de información profesional y
                                 solicitud de citas.
                             </p>
                             <p>
-                                <strong>DoctorConnect no presta servicios médicos.</strong>{" "}
+                                <strong>CareSalud no presta servicios médicos.</strong>{" "}
                                 Actuamos únicamente como intermediarios entre pacientes y
                                 profesionales sanitarios.
                             </p>
@@ -122,7 +122,7 @@ export default function TermsOfServicePage() {
                                 <li>No publicar contenido falso, ofensivo o ilegal</li>
                                 <li>No intentar acceder a cuentas de otros usuarios</li>
                                 <li>No utilizar sistemas automatizados sin autorización</li>
-                                <li>Respetar la propiedad intelectual de DoctorConnect</li>
+                                <li>Respetar la propiedad intelectual de CareSalud</li>
                             </ul>
                         </section>
 
@@ -158,7 +158,7 @@ export default function TermsOfServicePage() {
                                 </span>
                                 Limitación de responsabilidad
                             </h2>
-                            <p className="mb-4">DoctorConnect no es responsable de:</p>
+                            <p className="mb-4">CareSalud no es responsable de:</p>
                             <ul className="list-disc pl-6 space-y-2">
                                 <li>
                                     La calidad de los servicios prestados por los profesionales
@@ -255,7 +255,7 @@ export default function TermsOfServicePage() {
             {/* Footer */}
             <footer className="bg-white border-t border-gray-100 py-8">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-                    <p>© 2024 DoctorConnect Spain S.L. Todos los derechos reservados.</p>
+                    <p>© 2024 CareSalud Spain S.L. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

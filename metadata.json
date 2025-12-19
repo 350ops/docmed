@@ -1,5 +1,5 @@
 {
-  "name": "DoctorConnect - Doctoralia Replica",
+  "name": "CareSalud - Doctoralia Replica",
   "description": "A healthcare marketplace platform connecting patients and medical professionals with AI-powered specialist recommendations and online booking management.",
   "requestFramePermissions": [
     "geolocation"

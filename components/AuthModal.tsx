@@ -1,19 +1,28 @@
 "use client";
 
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, MapPin, Loader2 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { Mail, Lock, User, MapPin, Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: () => void;
 }
 
-type AuthMode = 'login' | 'signup';
-
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const { login, signup, signInWithApple } = useAuth();
-    const [mode, setMode] = useState<AuthMode>('login');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -23,26 +32,37 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
     const [name, setName] = useState('');
     const [city, setCity] = useState('');
 
-    if (!isOpen) return null;
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setIsLoading(true);
 
         try {
-            let success = false;
-            if (mode === 'login') {
-                success = await login(email, password);
-            } else {
-                if (!name.trim() || !city.trim()) {
-                    setError('Por favor, completa todos los campos');
-                    setIsLoading(false);
-                    return;
-                }
-                success = await signup(email, password, name, city);
+            const success = await login(email, password);
+            if (success) {
+                onSuccess?.();
+                onClose();
+                resetForm();
             }
+        } catch (err) {
+            setError('Ha ocurrido un error. Inténtalo de nuevo.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setIsLoading(true);
+
+        try {
+            if (!name.trim() || !city.trim()) {
+                setError('Por favor, completa todos los campos');
+                setIsLoading(false);
+                return;
+            }
+            const success = await signup(email, password, name, city);
             if (success) {
                 onSuccess?.();
                 onClose();
@@ -80,154 +100,171 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         setError(null);
     };
 
-    const switchMode = () => {
-        setMode(mode === 'login' ? 'signup' : 'login');
-        setError(null);
-    };
-
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={onClose}
-            />
-
-            {/* Modal */}
-            <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="bg-gradient-to-br from-doctoralia-teal to-teal-600 p-6 text-white">
-                    <button
-                        onClick={onClose}
-                        className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                    <h2 className="text-2xl font-bold">
-                        {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
-                    </h2>
-                    <p className="text-teal-100 mt-1">
-                        {mode === 'login'
-                            ? 'Accede a tu cuenta para reservar citas'
-                            : 'Regístrate para gestionar tus citas'}
-                    </p>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+                <div className="bg-gradient-to-br from-primary to-primary/80 p-6 text-white">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-white">Bienvenido</DialogTitle>
+                        <DialogDescription className="text-primary-foreground/80">
+                            Accede o crea tu cuenta para reservar citas
+                        </DialogDescription>
+                    </DialogHeader>
                 </div>
 
-                {/* Content */}
                 <div className="p-6">
                     {/* Apple Sign In */}
-                    <button
+                    <Button
                         onClick={handleAppleSignIn}
                         disabled={isLoading}
-                        className="w-full bg-black text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-900 transition mb-4 disabled:opacity-50"
+                        variant="outline"
+                        className="w-full bg-black text-white hover:bg-gray-900 hover:text-white font-semibold py-6 flex items-center justify-center gap-3 mb-4 border-0"
                     >
                         <AppleIcon className="w-5 h-5" />
                         Continuar con Apple
-                    </button>
+                    </Button>
 
                     <div className="flex items-center gap-4 my-6">
-                        <div className="flex-1 h-px bg-gray-200" />
-                        <span className="text-sm text-gray-400 font-medium">o</span>
-                        <div className="flex-1 h-px bg-gray-200" />
+                        <div className="flex-1 h-px bg-border" />
+                        <span className="text-sm text-muted-foreground font-medium">o con email</span>
+                        <div className="flex-1 h-px bg-border" />
                     </div>
 
-                    {/* Email Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {mode === 'signup' && (
-                            <>
-                                <div className="relative">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Nombre completo"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doctoralia-teal/20 focus:border-doctoralia-teal transition"
-                                        required
-                                    />
+                    <Tabs defaultValue="login" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-6">
+                            <TabsTrigger value="login" className="font-semibold">Iniciar sesión</TabsTrigger>
+                            <TabsTrigger value="signup" className="font-semibold">Crear cuenta</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="login">
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="login-email">Correo electrónico</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="login-email"
+                                            type="email"
+                                            placeholder="tu@email.com"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="relative">
-                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Ciudad"
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doctoralia-teal/20 focus:border-doctoralia-teal transition"
-                                        required
-                                    />
+                                <div className="space-y-2">
+                                    <Label htmlFor="login-password">Contraseña</Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="login-password"
+                                            type="password"
+                                            placeholder="••••••••"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                            minLength={6}
+                                        />
+                                    </div>
                                 </div>
-                            </>
-                        )}
 
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="email"
-                                placeholder="Correo electrónico"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doctoralia-teal/20 focus:border-doctoralia-teal transition"
-                                required
-                            />
-                        </div>
+                                {error && (
+                                    <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm font-medium">
+                                        {error}
+                                    </div>
+                                )}
 
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="password"
-                                placeholder="Contraseña"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doctoralia-teal/20 focus:border-doctoralia-teal transition"
-                                required
-                                minLength={6}
-                            />
-                        </div>
+                                <Button type="submit" disabled={isLoading} className="w-full py-6 font-bold">
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Iniciar sesión'}
+                                </Button>
+                            </form>
+                        </TabsContent>
 
-                        {error && (
-                            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium">
-                                {error}
-                            </div>
-                        )}
+                        <TabsContent value="signup">
+                            <form onSubmit={handleSignup} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="signup-name">Nombre completo</Label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="signup-name"
+                                            type="text"
+                                            placeholder="Juan García"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                        />
+                                    </div>
+                                </div>
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-doctoralia-teal text-white font-bold py-3 px-4 rounded-xl hover:bg-[#00af94] transition flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
-                            {isLoading ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : mode === 'login' ? (
-                                'Iniciar sesión'
-                            ) : (
-                                'Crear cuenta'
-                            )}
-                        </button>
-                    </form>
+                                <div className="space-y-2">
+                                    <Label htmlFor="signup-city">Ciudad</Label>
+                                    <div className="relative">
+                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="signup-city"
+                                            type="text"
+                                            placeholder="Madrid"
+                                            value={city}
+                                            onChange={(e) => setCity(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                        />
+                                    </div>
+                                </div>
 
-                    {/* Switch mode */}
-                    <p className="text-center text-gray-500 mt-6">
-                        {mode === 'login' ? (
-                            <>
-                                ¿No tienes cuenta?{' '}
-                                <button onClick={switchMode} className="text-doctoralia-teal font-semibold hover:underline">
-                                    Regístrate
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                ¿Ya tienes cuenta?{' '}
-                                <button onClick={switchMode} className="text-doctoralia-teal font-semibold hover:underline">
-                                    Inicia sesión
-                                </button>
-                            </>
-                        )}
-                    </p>
+                                <div className="space-y-2">
+                                    <Label htmlFor="signup-email">Correo electrónico</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="signup-email"
+                                            type="email"
+                                            placeholder="tu@email.com"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="signup-password">Contraseña</Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <Input
+                                            id="signup-password"
+                                            type="password"
+                                            placeholder="Mínimo 6 caracteres"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="pl-10"
+                                            required
+                                            minLength={6}
+                                        />
+                                    </div>
+                                </div>
+
+                                {error && (
+                                    <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm font-medium">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <Button type="submit" disabled={isLoading} className="w-full py-6 font-bold">
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear cuenta'}
+                                </Button>
+                            </form>
+                        </TabsContent>
+                    </Tabs>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 };
 
