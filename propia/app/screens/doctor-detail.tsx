@@ -86,7 +86,7 @@ const DoctorDetail = () => {
 
     const rightComponents = [
         <Favorite key="fav" productName={doctor.name} size={25} isWhite />,
-        <HeaderIcon key="share" icon="Share2" onPress={handleShare} isWhite />,
+        <HeaderIcon key="share" icon="Share2" onPress={handleShare} isWhite href={''} />,
     ];
 
     // Mock reviews
@@ -215,10 +215,10 @@ const DoctorDetail = () => {
                                                 key={i}
                                                 onPress={() => hasSlots && setSelectedDate(day.dateStr)}
                                                 className={`w-16 p-3 rounded-xl items-center ${isSelected
-                                                        ? 'bg-teal-500'
-                                                        : hasSlots
-                                                            ? 'bg-teal-50 dark:bg-teal-900/30'
-                                                            : 'bg-light-secondary dark:bg-dark-secondary opacity-50'
+                                                    ? 'bg-teal-500'
+                                                    : hasSlots
+                                                        ? 'bg-teal-50 dark:bg-teal-900/30'
+                                                        : 'bg-light-secondary dark:bg-dark-secondary opacity-50'
                                                     }`}
                                             >
                                                 <ThemedText className={`text-xs uppercase ${isSelected ? 'text-white' : ''}`}>
@@ -250,8 +250,8 @@ const DoctorDetail = () => {
                                                 key={i}
                                                 onPress={() => setSelectedTime(time)}
                                                 className={`px-4 py-2 rounded-lg ${selectedTime === time
-                                                        ? 'bg-teal-500'
-                                                        : 'bg-light-secondary dark:bg-dark-secondary'
+                                                    ? 'bg-teal-500'
+                                                    : 'bg-light-secondary dark:bg-dark-secondary'
                                                     }`}
                                             >
                                                 <ThemedText className={`font-medium ${selectedTime === time ? 'text-white' : ''}`}>
