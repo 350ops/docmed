@@ -171,7 +171,7 @@ export default function DoctorDashboardPage() {
                         </a>
 
                         <a
-                            href="#"
+                            href="/doctor/reviews"
                             className="p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition text-center group"
                         >
                             <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">

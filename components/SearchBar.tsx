@@ -163,7 +163,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
                   })
                 ) : (
                   <div className="px-4 py-4 text-sm text-gray-500 italic">
-                    No hay sugerencias para "{specialty}"
+                    No hay sugerencias para “{specialty}”
                   </div>
                 )}
               </div>

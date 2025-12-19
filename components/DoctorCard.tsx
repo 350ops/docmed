@@ -1,22 +1,26 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { Star, MapPin, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
 import { Doctor } from '@/types';
 
 interface DoctorCardProps {
   doctor: Doctor;
   onBook: (id: string, slot: string) => void;
+  onView: (doctor: Doctor) => void;
 }
 
-const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
+const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook, onView }) => {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 mb-4 flex flex-col lg:flex-row gap-6">
       <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
         <div className="relative">
-          <img
+          <Image
             src={doctor.image}
             alt={doctor.name}
+            width={96}
+            height={96}
             className="w-24 h-24 rounded-2xl object-cover mb-4 ring-2 ring-gray-50"
           />
           {doctor.isVerified && (
@@ -49,7 +53,10 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
         </div>
 
         <div className="flex flex-wrap gap-2 mt-auto">
-          <button className="text-doctoralia-teal font-semibold text-sm border border-doctoralia-teal px-4 py-2 rounded-lg hover:bg-teal-50 transition">
+          <button
+            onClick={() => onView(doctor)}
+            className="text-doctoralia-teal font-semibold text-sm border border-doctoralia-teal px-4 py-2 rounded-lg hover:bg-teal-50 transition"
+          >
             Ver perfil completo
           </button>
         </div>
@@ -79,13 +86,16 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
               </button>
             );
           })}
-          <button className="flex items-center justify-center p-2 text-doctoralia-teal font-bold text-sm bg-teal-50 rounded-xl hover:bg-teal-100 transition">
+          <button
+            onClick={() => onView(doctor)}
+            className="flex items-center justify-center p-2 text-doctoralia-teal font-bold text-sm bg-teal-50 rounded-xl hover:bg-teal-100 transition"
+          >
             Ver más →
           </button>
         </div>
 
         <div className="mt-6 border-t border-gray-100 pt-4 text-sm text-gray-500">
-          <p className="line-clamp-2 italic">"{doctor.bio}"</p>
+          <p className="line-clamp-2 italic">“{doctor.bio}”</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/auth";
 import { Search, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
@@ -34,14 +35,14 @@ export default function DoctorLoginPage() {
             <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <a href="/" className="inline-flex items-center gap-2">
+                    <Link href="/" className="inline-flex items-center gap-2">
                         <div className="w-12 h-12 bg-doctoralia-teal rounded-xl flex items-center justify-center shadow-lg shadow-teal-100">
                             <Search className="text-white w-7 h-7" />
                         </div>
                         <span className="text-3xl font-black text-gray-900 tracking-tighter">
                             doctor<span className="text-doctoralia-teal">connect</span>
                         </span>
-                    </a>
+                    </Link>
                     <p className="mt-4 text-gray-500 font-medium">Portal para profesionales</p>
                 </div>
 
