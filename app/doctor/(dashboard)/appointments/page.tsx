@@ -1,9 +1,34 @@
 "use client";
 
-import React from "react";
-import { Calendar, Clock, User, Video, MapPin } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Calendar, Clock, User, Video, MapPin, X, PlusCircle } from "lucide-react";
+
+const AVAILABILITY_KEY = "doctorconnect_custom_availability";
 
 export default function DoctorAppointmentsPage() {
+    const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
+    const [date, setDate] = useState("");
+    const [time, setTime] = useState("");
+    const [customSlots, setCustomSlots] = useState<string[]>([]);
+
+    useEffect(() => {
+        const stored = localStorage.getItem(AVAILABILITY_KEY);
+        if (stored) {
+            setCustomSlots(JSON.parse(stored));
+        }
+    }, []);
+
+    const saveSlot = () => {
+        if (!date || !time) return;
+        const iso = new Date(`${date}T${time}`).toISOString();
+        const next = [...customSlots, iso];
+        setCustomSlots(next);
+        localStorage.setItem(AVAILABILITY_KEY, JSON.stringify(next));
+        setShowAvailabilityModal(false);
+        setDate("");
+        setTime("");
+    };
+
     const appointments = [
         {
             id: 1,
@@ -60,7 +85,10 @@ export default function DoctorAppointmentsPage() {
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Mis Citas</h1>
                     <p className="text-gray-500">Gestiona tu agenda de consultas</p>
                 </div>
-                <button className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#00af94] transition shadow-lg shadow-teal-100">
+                <button
+                    onClick={() => setShowAvailabilityModal(true)}
+                    className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#00af94] transition shadow-lg shadow-teal-100"
+                >
                     <Calendar className="w-5 h-5" />
                     Configurar disponibilidad
                 </button>
@@ -141,6 +169,89 @@ export default function DoctorAppointmentsPage() {
                     ))}
                 </div>
             </div>
+
+            <div className="mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <PlusCircle className="w-5 h-5" />
+                        Disponibilidad añadida manualmente
+                    </h2>
+                    {customSlots.length > 0 && (
+                        <button
+                            className="text-sm font-semibold text-doctoralia-teal hover:underline"
+                            onClick={() => {
+                                setCustomSlots([]);
+                                localStorage.removeItem(AVAILABILITY_KEY);
+                            }}
+                        >
+                            Limpiar todo
+                        </button>
+                    )}
+                </div>
+                {customSlots.length === 0 ? (
+                    <p className="text-gray-500 text-sm">Aún no has añadido nuevos huecos. Usa el botón de arriba para crear disponibilidad extra.</p>
+                ) : (
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {customSlots.map((slot) => {
+                            const dateObj = new Date(slot);
+                            return (
+                                <div key={slot} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    <p className="text-xs text-gray-500 capitalize">
+                                        {dateObj.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
+                                    </p>
+                                    <p className="font-semibold text-gray-900">{dateObj.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {showAvailabilityModal && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 flex items-center justify-center px-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-gray-100">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-bold text-gray-900">Nuevo hueco de agenda</h3>
+                            <button
+                                onClick={() => setShowAvailabilityModal(false)}
+                                className="p-2 hover:bg-gray-100 rounded-full transition"
+                            >
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                            Añade disponibilidad puntual para que los pacientes puedan reservarla al instante.
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <label className="text-sm font-semibold text-gray-700 mb-1 block">Fecha</label>
+                                <input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-doctoralia-teal"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm font-semibold text-gray-700 mb-1 block">Hora</label>
+                                <input
+                                    type="time"
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-doctoralia-teal"
+                                />
+                            </div>
+                        </div>
+                        <button
+                            onClick={saveSlot}
+                            disabled={!date || !time}
+                            className="w-full bg-doctoralia-teal text-white py-3 rounded-xl font-semibold hover:bg-[#00af94] transition disabled:opacity-50"
+                        >
+                            Guardar disponibilidad
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

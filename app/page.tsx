@@ -1,22 +1,32 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import DoctorCard from '@/components/DoctorCard';
 import Filters from '@/components/Filters';
 import DocBot from '@/components/DocBot';
 import { MOCK_DOCTORS } from '@/lib/constants';
+import { getDoctors } from '@/lib/auth';
 import { Doctor } from '@/types';
-import { Search, Heart, Shield, Globe, CheckCircle } from 'lucide-react';
+import { Search, Heart, Shield, Globe, CheckCircle, MapPin, ShieldCheck, Star, Clock } from 'lucide-react';
 
 export default function Home() {
+    type PriceFilter = 'any' | 'low' | 'mid' | 'high';
+    type SortOption = 'relevance' | 'rating' | 'distance' | 'price';
+
     const [doctors, setDoctors] = useState<Doctor[]>(MOCK_DOCTORS);
     const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>(MOCK_DOCTORS);
     const [searchQuery, setSearchQuery] = useState({ specialty: '', location: '' });
     const [isSearching, setIsSearching] = useState(false);
     const [bookingSuccess, setBookingSuccess] = useState<string | null>(null);
     const [userLocation, setUserLocation] = useState<string | null>(null);
+    const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
+    const [selectedInsurances, setSelectedInsurances] = useState<string[]>([]);
+    const [selectedPrice, setSelectedPrice] = useState<PriceFilter>('any');
+    const [sortOption, setSortOption] = useState<SortOption>('relevance');
+    const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
     // Attempt to get user location on mount
     useEffect(() => {
@@ -33,26 +43,72 @@ export default function Home() {
         }
     }, []);
 
+    useEffect(() => {
+        const hydratedDoctors = getDoctors();
+        setDoctors(hydratedDoctors);
+        setFilteredDoctors(hydratedDoctors);
+    }, []);
+
+    const getPriceCategory = (priceRange: string): PriceFilter => {
+        const numbers = priceRange.match(/\d+/g)?.map(Number) || [];
+        const avg = numbers.length ? numbers.reduce((a, b) => a + b, 0) / numbers.length : 0;
+
+        if (avg === 0) return 'any';
+        if (avg < 60) return 'low';
+        if (avg <= 100) return 'mid';
+        return 'high';
+    };
+
+    const applyFilters = (specialtyTerm: string, locationTerm: string, nextSpecialty: string, insurances: string[], price: PriceFilter, sort: SortOption) => {
+        const results = doctors
+            .filter(doc => {
+                const matchesSearchSpecialty = !specialtyTerm ||
+                    doc.specialty.toLowerCase().includes(specialtyTerm.toLowerCase()) ||
+                    doc.name.toLowerCase().includes(specialtyTerm.toLowerCase()) ||
+                    doc.bio.toLowerCase().includes(specialtyTerm.toLowerCase());
+
+                const matchesSearchLocation = !locationTerm ||
+                    doc.location.toLowerCase().includes(locationTerm.toLowerCase()) ||
+                    doc.city.toLowerCase().includes(locationTerm.toLowerCase()) ||
+                    doc.address.toLowerCase().includes(locationTerm.toLowerCase());
+
+                const matchesFilterSpecialty = nextSpecialty === 'all' || doc.specialty === nextSpecialty;
+                const matchesInsurance = insurances.length === 0 || insurances.every(ins => doc.insurances.includes(ins));
+                const matchesPrice = price === 'any' || getPriceCategory(doc.priceRange) === price;
+
+                return matchesSearchSpecialty && matchesSearchLocation && matchesFilterSpecialty && matchesInsurance && matchesPrice;
+            })
+            .sort((a, b) => {
+                switch (sort) {
+                    case 'rating':
+                        return b.rating - a.rating;
+                    case 'price': {
+                        const priceA = getPriceCategory(a.priceRange);
+                        const priceB = getPriceCategory(b.priceRange);
+                        const order = ['low', 'mid', 'high'];
+                        return order.indexOf(priceA) - order.indexOf(priceB);
+                    }
+                    case 'distance': {
+                        const searchLoc = locationTerm.toLowerCase();
+                        const aMatch = searchLoc && a.city.toLowerCase().includes(searchLoc);
+                        const bMatch = searchLoc && b.city.toLowerCase().includes(searchLoc);
+                        if (aMatch === bMatch) return 0;
+                        return aMatch ? -1 : 1;
+                    }
+                    default:
+                        return 0;
+                }
+            });
+
+        setFilteredDoctors(results);
+    };
+
     const handleSearch = (specialty: string, location: string) => {
         setIsSearching(true);
         setSearchQuery({ specialty, location });
 
         setTimeout(() => {
-            const results = MOCK_DOCTORS.filter(doc => {
-                const matchesSpecialty = !specialty ||
-                    doc.specialty.toLowerCase().includes(specialty.toLowerCase()) ||
-                    doc.name.toLowerCase().includes(specialty.toLowerCase()) ||
-                    doc.bio.toLowerCase().includes(specialty.toLowerCase());
-
-                const matchesLocation = !location ||
-                    doc.location.toLowerCase().includes(location.toLowerCase()) ||
-                    doc.city.toLowerCase().includes(location.toLowerCase()) ||
-                    doc.address.toLowerCase().includes(location.toLowerCase());
-
-                return matchesSpecialty && matchesLocation;
-            });
-
-            setFilteredDoctors(results);
+            applyFilters(specialty, location, selectedSpecialty, selectedInsurances, selectedPrice, sortOption);
             setIsSearching(false);
 
             const resultsElement = document.getElementById('results-section');
@@ -80,13 +136,56 @@ export default function Home() {
         setTimeout(() => setBookingSuccess(null), 6000);
     };
 
-    const handleFilterChange = (filters: { specialty?: string }) => {
-        if (filters.specialty && filters.specialty !== 'all') {
-            const filtered = MOCK_DOCTORS.filter(d => d.specialty === filters.specialty);
-            setFilteredDoctors(filtered);
-        } else if (filters.specialty === 'all') {
-            setFilteredDoctors(MOCK_DOCTORS);
+    const handleFilterChange = (filters: { type: 'specialty' | 'insurance' | 'price' | 'reset'; value?: string; checked?: boolean }) => {
+        if (filters.type === 'reset') {
+            setSelectedSpecialty('all');
+            setSelectedInsurances([]);
+            setSelectedPrice('any');
+            applyFilters(searchQuery.specialty, searchQuery.location, 'all', [], 'any', sortOption);
+            return;
         }
+
+        if (filters.type === 'specialty') {
+            const nextSpecialty = filters.value || 'all';
+            setSelectedSpecialty(nextSpecialty);
+            applyFilters(searchQuery.specialty, searchQuery.location, nextSpecialty, selectedInsurances, selectedPrice, sortOption);
+            return;
+        }
+
+        if (filters.type === 'insurance' && filters.value) {
+            const nextInsurances = filters.checked
+                ? [...selectedInsurances, filters.value]
+                : selectedInsurances.filter(i => i !== filters.value);
+            setSelectedInsurances(nextInsurances);
+            applyFilters(searchQuery.specialty, searchQuery.location, selectedSpecialty, nextInsurances, selectedPrice, sortOption);
+            return;
+        }
+
+        if (filters.type === 'price') {
+            const nextPrice = (filters.value as PriceFilter) || 'any';
+            setSelectedPrice(nextPrice);
+            applyFilters(searchQuery.specialty, searchQuery.location, selectedSpecialty, selectedInsurances, nextPrice, sortOption);
+        }
+    };
+
+    const handleSortChange = (value: SortOption) => {
+        setSortOption(value);
+        applyFilters(searchQuery.specialty, searchQuery.location, selectedSpecialty, selectedInsurances, selectedPrice, value);
+    };
+
+    const handleBookFromModal = (slot: string) => {
+        if (!selectedDoctor) return;
+        handleBook(selectedDoctor.id, slot);
+        setSelectedDoctor(null);
+    };
+
+    const handleOpenChat = () => {
+        const chatBtn = document.querySelector('[data-docbot-trigger]') as HTMLButtonElement;
+        if (chatBtn) chatBtn.click();
+    };
+
+    const handleDoctorView = (doctor: Doctor) => {
+        setSelectedDoctor(doctor);
     };
 
     return (
@@ -144,7 +243,12 @@ export default function Home() {
 
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Side Filters */}
-                    <Filters onFilterChange={handleFilterChange} />
+                    <Filters
+                        onFilterChange={handleFilterChange}
+                        selectedSpecialty={selectedSpecialty}
+                        selectedInsurances={selectedInsurances}
+                        selectedPrice={selectedPrice}
+                    />
 
                     {/* Doctors List */}
                     <div className="flex-1">
@@ -162,11 +266,15 @@ export default function Home() {
                             </div>
                             <div className="flex items-center gap-3 bg-white p-1 rounded-xl border border-gray-200 shadow-sm self-start sm:self-center">
                                 <span className="text-xs font-bold text-gray-400 px-3 uppercase tracking-wider">Ordenar:</span>
-                                <select className="text-sm font-semibold text-gray-700 outline-none bg-transparent pr-4 cursor-pointer">
-                                    <option>Relevancia</option>
-                                    <option>Mejor valorados</option>
-                                    <option>Más cercanos</option>
-                                    <option>Precio más bajo</option>
+                                <select
+                                    value={sortOption}
+                                    onChange={(e) => handleSortChange(e.target.value as SortOption)}
+                                    className="text-sm font-semibold text-gray-700 outline-none bg-transparent pr-4 cursor-pointer"
+                                >
+                                    <option value="relevance">Relevancia</option>
+                                    <option value="rating">Mejor valorados</option>
+                                    <option value="distance">Más cercanos</option>
+                                    <option value="price">Precio más bajo</option>
                                 </select>
                             </div>
                         </div>
@@ -193,6 +301,7 @@ export default function Home() {
                                         key={doctor.id}
                                         doctor={doctor}
                                         onBook={handleBook}
+                                        onView={handleDoctorView}
                                     />
                                 ))}
 
@@ -231,8 +340,136 @@ export default function Home() {
                 </div>
             </main>
 
+            {selectedDoctor && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden border border-gray-100">
+                        <div className="flex items-start justify-between p-6 border-b border-gray-100">
+                            <div className="flex items-center gap-4">
+                                <Image
+                                    src={selectedDoctor.image}
+                                    alt={selectedDoctor.name}
+                                    width={80}
+                                    height={80}
+                                    className="w-20 h-20 rounded-2xl object-cover ring-2 ring-gray-50"
+                                />
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-2xl font-bold text-gray-900">{selectedDoctor.name}</h3>
+                                        {selectedDoctor.isVerified && (
+                                            <span className="bg-doctoralia-teal text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                                                <CheckCircle className="w-4 h-4" />
+                                                Verificado
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-doctoralia-teal font-semibold">{selectedDoctor.specialty}</p>
+                                    <div className="flex items-center gap-3 text-sm text-gray-600 mt-2">
+                                        <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-400 fill-current" /> {selectedDoctor.rating} ({selectedDoctor.reviewCount} opiniones)</span>
+                                        <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-doctoralia-teal" /> {selectedDoctor.insurances.length} aseguradoras</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setSelectedDoctor(null)}
+                                className="p-2 hover:bg-gray-100 rounded-full transition"
+                                aria-label="Cerrar detalle de profesional"
+                            >
+                                <XIcon className="w-6 h-6 text-gray-500" />
+                            </button>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-6 p-6">
+                            <div className="space-y-4">
+                                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                                    <p className="text-sm text-gray-500 mb-2">Biografía</p>
+                                    <p className="text-gray-800 leading-relaxed">{selectedDoctor.bio}</p>
+                                </div>
+
+                                <div className="bg-white rounded-2xl p-4 border border-gray-100 space-y-3">
+                                    <div className="flex items-center gap-2 text-gray-700">
+                                        <MapPin className="w-4 h-4" />
+                                        <span>{selectedDoctor.address}</span>
+                                    </div>
+                                    <a
+                                        className="text-doctoralia-teal font-semibold text-sm hover:underline"
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedDoctor.address)}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        Abrir en Google Maps
+                                    </a>
+                                    <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+                                        {selectedDoctor.insurances.map((ins) => (
+                                            <span key={ins} className="px-3 py-1 bg-teal-50 text-doctoralia-teal text-xs font-semibold rounded-full">
+                                                {ins}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between bg-teal-50 border border-teal-100 rounded-2xl p-4">
+                                    <div>
+                                        <p className="text-sm text-teal-800 font-semibold">Rango de precios</p>
+                                        <p className="text-2xl font-bold text-teal-900">{selectedDoctor.priceRange}</p>
+                                    </div>
+                                    <button
+                                        onClick={handleOpenChat}
+                                        className="bg-doctoralia-teal text-white px-4 py-2 rounded-xl font-semibold shadow-lg shadow-teal-100 hover:scale-105 transition"
+                                    >
+                                        Consultar con DocBot
+                                    </button>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <p className="font-semibold text-gray-900">Horarios disponibles</p>
+                                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                                            <Clock className="w-4 h-4" /> Citas inmediatas
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {selectedDoctor.availability.map((slot, idx) => {
+                                            const date = new Date(slot);
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleBookFromModal(slot)}
+                                                    className="p-3 bg-white border border-gray-200 rounded-xl hover:border-doctoralia-teal hover:bg-teal-50 transition text-left"
+                                                >
+                                                    <p className="text-xs text-gray-500 capitalize">
+                                                        {date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' })}
+                                                    </p>
+                                                    <p className="text-lg font-bold text-gray-900">
+                                                        {date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                                    </p>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="bg-white border border-gray-100 rounded-2xl p-4">
+                                    <p className="text-sm text-gray-500 mb-2">¿Necesitas otro horario?</p>
+                                    <button
+                                        onClick={() => {
+                                            handleOpenChat();
+                                            setSelectedDoctor(null);
+                                        }}
+                                        className="w-full text-doctoralia-teal font-semibold py-3 rounded-xl border border-doctoralia-teal hover:bg-teal-50 transition"
+                                    >
+                                        Solicitar disponibilidad personalizada
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Value Prop Section */}
-            <section className="bg-white py-24 border-t border-gray-100 overflow-hidden relative">
+            <section id="value-prop" className="bg-white py-24 border-t border-gray-100 overflow-hidden relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold text-gray-900 mb-4">Salud de calidad al alcance de tu mano</h2>
@@ -273,12 +510,22 @@ export default function Home() {
                             Descarga nuestra App gratuita y lleva el control de tu salud allá donde vayas. Recibe recordatorios, gestiona recetas y contacta con tu médico.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <button className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-gray-100 transition">
+                            <a
+                                href="https://apps.apple.com/es/app/doctoralia/id654189823"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-gray-100 transition"
+                            >
                                 <AppleIcon className="w-6 h-6" /> App Store
-                            </button>
-                            <button className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-gray-100 transition">
+                            </a>
+                            <a
+                                href="https://play.google.com/store/apps/details?id=es.doctoralia.pacientes"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-gray-100 transition"
+                            >
                                 <PlayStoreIcon className="w-6 h-6" /> Google Play
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div className="lg:w-1/2 flex justify-center">
@@ -320,28 +567,28 @@ export default function Home() {
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Para pacientes</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Especialistas</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Centros médicos</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Servicios</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Enfermedades</a></li>
+                                <li><a href="#results-section" className="hover:text-doctoralia-teal transition">Especialistas</a></li>
+                                <li><a href="#value-prop" className="hover:text-doctoralia-teal transition">Centros médicos</a></li>
+                                <li><a href="#value-prop" className="hover:text-doctoralia-teal transition">Servicios</a></li>
+                                <li><a href="#value-prop" className="hover:text-doctoralia-teal transition">Enfermedades</a></li>
                             </ul>
                         </div>
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Para médicos</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Suscripciones</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Agenda Online</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Consultas Online</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Recurso para centros</a></li>
+                                <li><a href="/doctor/settings" className="hover:text-doctoralia-teal transition">Suscripciones</a></li>
+                                <li><a href="/doctor/appointments" className="hover:text-doctoralia-teal transition">Agenda Online</a></li>
+                                <li><a href="/doctor/reviews" className="hover:text-doctoralia-teal transition">Consultas Online</a></li>
+                                <li><a href="/doctor/login" className="hover:text-doctoralia-teal transition">Recurso para centros</a></li>
                             </ul>
                         </div>
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Legal</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Privacidad</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Términos de uso</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Cookies</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Accesibilidad</a></li>
+                                <li><a href="mailto:legal@doctorconnect.es" className="hover:text-doctoralia-teal transition">Privacidad</a></li>
+                                <li><a href="mailto:legal@doctorconnect.es" className="hover:text-doctoralia-teal transition">Términos de uso</a></li>
+                                <li><a href="mailto:legal@doctorconnect.es" className="hover:text-doctoralia-teal transition">Cookies</a></li>
+                                <li><a href="mailto:legal@doctorconnect.es" className="hover:text-doctoralia-teal transition">Accesibilidad</a></li>
                             </ul>
                         </div>
                     </div>

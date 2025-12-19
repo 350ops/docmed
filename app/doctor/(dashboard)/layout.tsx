@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCurrentDoctor, logout } from "@/lib/auth";
@@ -105,11 +106,15 @@ export default function DoctorDashboardLayout({
                             </button>
 
                             <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-                                <img
-                                    src={doctor?.image}
-                                    alt={doctor?.name}
-                                    className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-100"
-                                />
+                                {doctor && (
+                                    <Image
+                                        src={doctor.image}
+                                        alt={doctor.name}
+                                        width={40}
+                                        height={40}
+                                        className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-100"
+                                    />
+                                )}
                                 <div className="hidden sm:block">
                                     <p className="font-semibold text-gray-900 text-sm">
                                         {doctor?.name}

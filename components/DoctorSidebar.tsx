@@ -3,12 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Calendar, Settings, LayoutDashboard } from "lucide-react";
+import { User, Calendar, Settings, LayoutDashboard, Star } from "lucide-react";
 
 const navItems = [
     { href: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/doctor/profile", icon: User, label: "Mi Perfil" },
     { href: "/doctor/appointments", icon: Calendar, label: "Citas" },
+    { href: "/doctor/reviews", icon: Star, label: "Opiniones" },
     { href: "/doctor/settings", icon: Settings, label: "Ajustes" },
 ];
 

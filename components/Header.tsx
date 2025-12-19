@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { User, Menu, Search, Calendar, ChevronDown } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -9,19 +10,19 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-8">
-            <a href="#" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="w-10 h-10 bg-doctoralia-teal rounded-lg flex items-center justify-center">
                 <Search className="text-white w-6 h-6" />
               </div>
               <span className="text-2xl font-bold text-gray-900 tracking-tight">
                 doctor<span className="text-doctoralia-teal">connect</span>
               </span>
-            </a>
+            </Link>
 
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="#" className="text-gray-600 hover:text-doctoralia-teal font-medium">Especialidades</a>
-              <a href="#" className="text-gray-600 hover:text-doctoralia-teal font-medium">Enfermedades</a>
-              <a href="#" className="text-gray-600 hover:text-doctoralia-teal font-medium flex items-center gap-1">
+              <a href="#results-section" className="text-gray-600 hover:text-doctoralia-teal font-medium">Especialistas</a>
+              <a href="#value-prop" className="text-gray-600 hover:text-doctoralia-teal font-medium">Enfermedades</a>
+              <a href="#filters" className="text-gray-600 hover:text-doctoralia-teal font-medium flex items-center gap-1">
                 Seguros <ChevronDown className="w-4 h-4" />
               </a>
             </nav>

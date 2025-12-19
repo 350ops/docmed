@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { getCurrentDoctor, updateDoctor } from "@/lib/auth";
 import { Doctor } from "@/types";
 import {
@@ -103,18 +104,20 @@ export default function DoctorProfilePage() {
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                 {/* Cover & Photo */}
                 <div className="relative h-32 bg-gradient-to-r from-doctoralia-teal to-teal-600">
-                    <div className="absolute -bottom-12 left-8">
-                        <div className="relative">
-                            <img
-                                src={isEditing ? editedDoctor.image : doctor.image}
-                                alt={doctor.name}
-                                className="w-28 h-28 rounded-2xl object-cover border-4 border-white shadow-lg"
-                            />
-                            {isEditing && (
-                                <button className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition">
-                                    <Camera className="w-4 h-4 text-gray-600" />
-                                </button>
-                            )}
+                            <div className="absolute -bottom-12 left-8">
+                                <div className="relative">
+                                    <Image
+                                        src={isEditing ? editedDoctor.image : doctor.image}
+                                        alt={doctor.name}
+                                        width={112}
+                                        height={112}
+                                        className="w-28 h-28 rounded-2xl object-cover border-4 border-white shadow-lg"
+                                    />
+                                    {isEditing && (
+                                        <button className="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition">
+                                            <Camera className="w-4 h-4 text-gray-600" />
+                                        </button>
+                                    )}
                         </div>
                     </div>
                 </div>
