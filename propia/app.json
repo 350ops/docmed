@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "newArchEnabled": true,
+    "name": "CareSalud",
+    "slug": "caresalud",
+    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "scheme": "caresalud",
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00C3A5"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.caresalud.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#00C3A5"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "predictiveBackGestureEnabled": false,
+      "package": "com.caresalud.app",
+      "config": {
+        "enableOnBackInvokedCallback": false
+      }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "11853cd2-a6e3-4b02-8a81-29938150b8a1"
+      }
+    },
+    "owner": "thomino",
+    "updates": {
+      "url": "https://u.expo.dev/11853cd2-a6e3-4b02-8a81-29938150b8a1"
+    }
+  }
+}
