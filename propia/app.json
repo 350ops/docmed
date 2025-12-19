@@ -47,14 +47,7 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "11853cd2-a6e3-4b02-8a81-29938150b8a1"
       }
-    },
-    "owner": "thomino",
-    "updates": {
-      "url": "https://u.expo.dev/11853cd2-a6e3-4b02-8a81-29938150b8a1"
     }
   }
 }
