@@ -39,7 +39,7 @@ export default function DoctorLoginPage() {
                             <Search className="text-white w-7 h-7" />
                         </div>
                         <span className="text-3xl font-black text-gray-900 tracking-tighter">
-                            doctor<span className="text-doctoralia-teal">connect</span>
+                            care<span className="text-doctoralia-teal">salud</span>
                         </span>
                     </a>
                     <p className="mt-4 text-gray-500 font-medium">Portal para profesionales</p>
@@ -135,7 +135,7 @@ export default function DoctorLoginPage() {
                 <div className="mt-6 p-4 bg-teal-50 border border-teal-100 rounded-xl">
                     <p className="text-sm text-teal-800 font-medium mb-2">🔑 Credenciales de prueba:</p>
                     <p className="text-sm text-teal-700">
-                        Email: <code className="bg-teal-100 px-1 rounded">elena@doctorconnect.es</code>
+                        Email: <code className="bg-teal-100 px-1 rounded">elena@caresalud.es</code>
                     </p>
                     <p className="text-sm text-teal-700">
                         Contraseña: <code className="bg-teal-100 px-1 rounded">doctor123</code>

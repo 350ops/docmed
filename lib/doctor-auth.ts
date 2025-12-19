@@ -5,14 +5,14 @@ import { MOCK_DOCTORS } from "./constants";
 
 // Mock doctor credentials (email derived from name)
 const MOCK_CREDENTIALS: Record<string, { password: string; doctorId: string }> = {
-    "elena@doctorconnect.es": { password: "doctor123", doctorId: "1" },
-    "javier@doctorconnect.es": { password: "doctor123", doctorId: "2" },
-    "sofia@doctorconnect.es": { password: "doctor123", doctorId: "3" },
-    "miguel@doctorconnect.es": { password: "doctor123", doctorId: "4" },
+    "elena@caresalud.es": { password: "doctor123", doctorId: "1" },
+    "javier@caresalud.es": { password: "doctor123", doctorId: "2" },
+    "sofia@caresalud.es": { password: "doctor123", doctorId: "3" },
+    "miguel@caresalud.es": { password: "doctor123", doctorId: "4" },
 };
 
-const AUTH_KEY = "doctorconnect_auth";
-const DOCTORS_KEY = "doctorconnect_doctors";
+const AUTH_KEY = "caresalud_auth";
+const DOCTORS_KEY = "caresalud_doctors";
 
 // Initialize doctors in localStorage if not present
 function initDoctors(): Doctor[] {
