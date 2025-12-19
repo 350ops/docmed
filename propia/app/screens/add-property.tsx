@@ -395,7 +395,7 @@ export default function AddPropertyScreen() {
     return (
         <MultiStep
             onComplete={() => {
-                router.push('/screens/listings');
+                router.push('/(tabs)/listings');
             }}
             onClose={() => router.push('/(tabs)/(home)')}
             showStepIndicator={false}

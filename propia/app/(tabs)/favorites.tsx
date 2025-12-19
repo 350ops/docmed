@@ -17,38 +17,15 @@ import Icon from '@/components/Icon';
 import { useCollapsibleTitle } from '@/app/hooks/useCollapsibleTitle';
 
 
-const savedItems = [
-  {
-    id: 1,
-    title: 'Barcelona',
-    descrition: '5 saved',
-    image: require('@/assets/img/room-1.avif'),
-  },
-  {
-    id: 2,
-    title: 'Paris',
-    descrition: '3 saved',
-    image: require('@/assets/img/room-2.avif'),
-  },
-  {
-    id: 3,
-    title: 'London',
-    descrition: '2 saved',
-    image: require('@/assets/img/room-3.avif'),
-  },
-  {
-    id: 4,
-    title: 'Rome',
-    descrition: '1 saved',
-    image: require('@/assets/img/room-4.avif'),
-  },
-  {
-    id: 5,
-    title: 'New York',
-    descrition: '0 saved',
-    image: require('@/assets/img/room-5.avif'),
-  },
-];
+import { MOCK_DOCTORS } from '@/lib/doctors';
+
+const savedItems = MOCK_DOCTORS.slice(0, 6).map((doctor) => ({
+  id: doctor.id,
+  title: doctor.name,
+  descrition: doctor.specialty,
+  image: { uri: doctor.image },
+  doctorId: doctor.id,
+}));
 
 const FavoritesScreen = () => {
   const { width } = Dimensions.get('window');
@@ -79,7 +56,7 @@ const FavoritesScreen = () => {
             <Grid className='mt-2' columns={2} spacing={20} >
               {savedItems.map((item) => (
                 <Card
-                  href={`/screens/favorite-list`}
+                  href={`/screens/doctor-detail?id=${item.doctorId}`}
                   key={item.id}
                   title={item.title}
                   image={item.image}
