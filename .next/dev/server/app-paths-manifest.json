@@ -1,3 +1,5 @@
 {
+  "/doctor/login/page": "app/doctor/login/page.js",
+  "/especialidades/page": "app/especialidades/page.js",
   "/page": "app/page.js"
 }
