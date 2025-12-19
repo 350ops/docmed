@@ -61,7 +61,6 @@ const FavoritesScreen = () => {
           <HeaderIcon
             icon={isEditMode ? "Check" : "Edit2"}
             onPress={() => setIsEditMode(!isEditMode)}
-            href="0"
           />
         ]}
           title="Favorites"

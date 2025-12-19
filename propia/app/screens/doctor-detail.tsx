@@ -85,8 +85,8 @@ const DoctorDetail = () => {
     };
 
     const rightComponents = [
-        <Favorite productName={doctor.name} size={25} isWhite />,
-        <HeaderIcon icon="Share2" onPress={handleShare} isWhite href="0" />,
+        <Favorite key="fav" productName={doctor.name} size={25} isWhite />,
+        <HeaderIcon key="share" icon="Share2" onPress={handleShare} isWhite />,
     ];
 
     // Mock reviews

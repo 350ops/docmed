@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, Pressable } from 'react-native';
+import { View, Image, Pressable, Share } from 'react-native';
 import Header, { HeaderIcon } from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import { Button } from '@/components/Button';
@@ -15,8 +15,15 @@ import Divider from '@/components/layout/Divider';
 const doctor = MOCK_DOCTORS[1];
 
 const ProductDetailScreen = () => {
+    const handleShare = async () => {
+        await Share.share({
+            message: `Mira a ${doctor.name}, especialista en ${doctor.specialty} en CareSalud.`,
+            title: doctor.name,
+        });
+    };
+
     const rightComponents = [
-        <HeaderIcon key="share" icon="Share2" href="0" />,
+        <HeaderIcon key="share" icon="Share2" onPress={handleShare} />,
     ];
 
     return (

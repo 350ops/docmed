@@ -128,7 +128,6 @@ export default function ChatDetailScreen() {
     const rightComponents = [
         <HeaderIcon
             icon="MoreVertical"
-            href="0"
             onPress={() => actionSheetRef.current?.show()}
         />
     ];
@@ -153,7 +152,6 @@ export default function ChatDetailScreen() {
                                 src={mockUser.avatar}
                                 name={mockUser.name}
                                 className='mr-1'
-                                link="0"
                             />
                         </View>
                     }
