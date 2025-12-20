@@ -16,6 +16,7 @@ import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reani
 import { BlurView } from "expo-blur";
 import { Button } from "./Button";
 import { SPECIALTIES } from "@/lib/doctors";
+import CatLauncher from "./CatLauncher";
 
 const SearchBar = (props: any) => {
     const [showModal, setShowModal] = useState(false);
@@ -42,65 +43,80 @@ const SearchModal = ({ showModal, setShowModal }: { showModal: boolean, setShowM
     const [openAccordion, setOpenAccordion] = useState<string | null>('specialty');
     const [searchQuery, setSearchQuery] = useState('');
 
+    const [isSearching, setIsSearching] = useState(false);
+
     const handleSearch = () => {
         setShowModal(false);
-        router.push(`/screens/map?q=${searchQuery}`);
+        setIsSearching(true);
     };
 
     return (
-        <Modal statusBarTranslucent={true} className='flex-1' visible={showModal} transparent={true} animationType="fade">
-            <BlurView experimentalBlurMethod="none" intensity={20} tint="systemUltraThinMaterialLight" className='flex-1'>
-                <AnimatedView className="flex-1" animation='slideInTop' duration={Platform.OS === 'ios' ? 500 : 0} delay={0}>
-                    <View className="flex-1 bg-neutral-200/70 dark:bg-black/90">
-                        <ThemedScroller style={{ paddingTop: insets.top + 10 }} className="bg-transparent">
-                            <Pressable
-                                onPress={() => setShowModal(false)}
-                                style={{ ...shadowPresets.card, elevation: 10, height: 50, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8.84, shadowOffset: { width: 0, height: 0 } }}
-                                className="items-center justify-center w-12 my-3 h-12 rounded-full ml-auto bg-light-primary dark:bg-dark-secondary">
-                                <Icon name="X" size={24} strokeWidth={2} />
-                            </Pressable>
+        <>
+            <Modal statusBarTranslucent={true} className='flex-1' visible={showModal} transparent={true} animationType="fade">
+                <BlurView experimentalBlurMethod="none" intensity={20} tint="systemUltraThinMaterialLight" className='flex-1'>
+                    <AnimatedView className="flex-1" animation='slideInTop' duration={Platform.OS === 'ios' ? 500 : 0} delay={0}>
+                        <View className="flex-1 bg-neutral-200/70 dark:bg-black/90">
+                            <ThemedScroller style={{ paddingTop: insets.top + 10 }} className="bg-transparent">
+                                <Pressable
+                                    onPress={() => setShowModal(false)}
+                                    style={{ ...shadowPresets.card, elevation: 10, height: 50, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8.84, shadowOffset: { width: 0, height: 0 } }}
+                                    className="items-center justify-center w-12 my-3 h-12 rounded-full ml-auto bg-light-primary dark:bg-dark-secondary">
+                                    <Icon name="X" size={24} strokeWidth={2} />
+                                </Pressable>
 
-                            <AccordionItem
-                                title="¿Qué necesitas?"
-                                label="Especialidad"
-                                isOpen={openAccordion === 'specialty'}
-                                onPress={() => setOpenAccordion(openAccordion === 'specialty' ? null : 'specialty')}>
-                                <SpecialtySearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-                            </AccordionItem>
+                                <AccordionItem
+                                    title="¿Qué necesitas?"
+                                    label="Especialidad"
+                                    isOpen={openAccordion === 'specialty'}
+                                    onPress={() => setOpenAccordion(openAccordion === 'specialty' ? null : 'specialty')}>
+                                    <SpecialtySearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                                </AccordionItem>
 
-                            <AccordionItem
-                                title="¿Dónde?"
-                                label="Tu ubicación"
-                                isOpen={openAccordion === 'location'}
-                                onPress={() => setOpenAccordion(openAccordion === 'location' ? null : 'location')}>
-                                <LocationSearch />
-                            </AccordionItem>
+                                <AccordionItem
+                                    title="¿Dónde?"
+                                    label="Tu ubicación"
+                                    isOpen={openAccordion === 'location'}
+                                    onPress={() => setOpenAccordion(openAccordion === 'location' ? null : 'location')}>
+                                    <LocationSearch />
+                                </AccordionItem>
 
-                            <AccordionItem
-                                title="¿Tu seguro médico?"
-                                label="Todos"
-                                isOpen={openAccordion === 'insurance'}
-                                onPress={() => setOpenAccordion(openAccordion === 'insurance' ? null : 'insurance')}>
-                                <InsuranceSearch />
-                            </AccordionItem>
-                        </ThemedScroller>
+                                <AccordionItem
+                                    title="¿Tu seguro médico?"
+                                    label="Todos"
+                                    isOpen={openAccordion === 'insurance'}
+                                    onPress={() => setOpenAccordion(openAccordion === 'insurance' ? null : 'insurance')}>
+                                    <InsuranceSearch />
+                                </AccordionItem>
+                            </ThemedScroller>
 
-                        <View style={{ paddingBottom: insets.bottom + 10 }} className="flex-row w-full px-6 justify-between">
-                            <Button title="Limpiar" onPress={() => setShowModal(false)} variant="ghost" className="" />
-                            <Button
-                                iconStart="Search"
-                                title="Buscar doctores"
-                                iconColor="white"
-                                textClassName="text-white"
-                                onPress={handleSearch}
-                                variant="primary"
-                                className="bg-teal-500"
-                            />
+                            <View style={{ paddingBottom: insets.bottom + 10 }} className="flex-row w-full px-6 justify-between">
+                                <Button title="Limpiar" onPress={() => setShowModal(false)} variant="ghost" className="" />
+                                <Button
+                                    iconStart="Search"
+                                    title="Buscar doctores"
+                                    iconColor="white"
+                                    textClassName="text-white"
+                                    onPress={handleSearch}
+                                    variant="primary"
+                                    className="bg-teal-500"
+                                />
+                            </View>
                         </View>
-                    </View>
-                </AnimatedView>
-            </BlurView>
-        </Modal>
+                    </AnimatedView>
+                </BlurView>
+            </Modal>
+            {
+                isSearching && (
+                    <CatLauncher
+                        launchType="search"
+                        onAnimationComplete={() => {
+                            setIsSearching(false);
+                            router.push(`/screens/map?q=${searchQuery}`);
+                        }}
+                    />
+                )
+            }
+        </>
     );
 };
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import ThemedText from './ThemedText';
 import useThemeColors from '@/app/contexts/ThemeColors';
+import CatLauncher from './CatLauncher';
 
 interface PageLoaderProps {
     text?: string;
@@ -12,9 +13,11 @@ export default function PageLoader({ text }: PageLoaderProps) {
 
     return (
         <View className="flex-1 items-center justify-center bg-light-primary dark:bg-dark-primary">
-            <ActivityIndicator size="large" color={colors.highlight} />
+            <View className="h-24 w-24 items-center justify-center">
+                <CatLauncher launchType="loader" />
+            </View>
             {text && (
-                <ThemedText className="mt-4 text-light-subtext dark:text-dark-subtext">
+                <ThemedText className="mt-8 text-light-subtext dark:text-dark-subtext font-medium">
                     {text}
                 </ThemedText>
             )}

@@ -16,7 +16,7 @@ const doctor = MOCK_DOCTORS[0];
 const PACKAGE_OPTIONS = [
     {
         id: 'first',
-        name: 'Tu mujer toma prestado lube par Carlar con su. vecino Colombiano',
+        name: 'Consulta de valoración inicial',
         price: '60€',
         deliveryTime: '30-45 min',
         icon: 'Video',
