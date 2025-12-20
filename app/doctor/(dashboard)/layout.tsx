@@ -38,12 +38,12 @@ export default function DoctorDashboardLayout({
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="relative w-24 h-12 mx-auto mb-4 animate-pulse">
+                    <div className="relative w-40 h-10 mx-auto mb-4 animate-pulse">
                         <Image 
                             src="/logo.png" 
                             alt="care salud" 
-                            width={96} 
-                            height={48} 
+                            width={160} 
+                            height={40} 
                             className="object-contain"
                         />
                     </div>
@@ -96,12 +96,12 @@ export default function DoctorDashboardLayout({
                                 <Menu className="w-5 h-5" />
                             </button>
                             <Link href="/" className="flex items-center gap-2">
-                                <div className="relative w-24 h-12">
+                                <div className="relative w-40 h-10">
                                     <Image 
                                         src="/logo.png" 
                                         alt="care salud" 
-                                        width={96} 
-                                        height={48} 
+                                        width={160} 
+                                        height={40} 
                                         className="object-contain"
                                     />
                                 </div>
