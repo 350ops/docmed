@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Doctor, DayAvailability } from '@/types';
 import Header from '@/components/Header';
 import {
@@ -118,9 +119,11 @@ export default function DoctorProfilePage() {
                             <CardContent className="p-6">
                                 <div className="flex flex-col sm:flex-row gap-6">
                                     <div className="relative">
-                                        <img
+                                        <Image
                                             src={doctor.image}
                                             alt={doctor.name}
+                                            width={128}
+                                            height={128}
                                             className="w-32 h-32 rounded-2xl object-cover shadow-lg"
                                         />
                                         {doctor.isVerified && (

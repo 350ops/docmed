@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Star, MapPin, ShieldCheck, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 import { Doctor } from '@/types';
 import { useAuth } from '@/lib/auth';
@@ -84,9 +85,11 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
           <div className="flex gap-4 lg:w-1/3">
             <Link href={`/doctor/${doctor.id}`} className="shrink-0">
               <div className="relative">
-                <img
+                <Image
                   src={doctor.image}
                   alt={doctor.name}
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-2xl object-cover shadow-md ring-2 ring-white hover:ring-primary transition-all"
                 />
                 {doctor.isVerified && (

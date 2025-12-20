@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { getCurrentDoctor, updateDoctor } from "@/lib/doctor-auth";
 import { Doctor } from "@/types";
 import {
@@ -105,9 +106,11 @@ export default function DoctorProfilePage() {
                 <div className="relative h-32 bg-gradient-to-r from-doctoralia-teal to-emerald-600">
                     <div className="absolute -bottom-12 left-8">
                         <div className="relative">
-                            <img
-                                src={isEditing ? editedDoctor.image : doctor.image}
+                            <Image
+                                src={isEditing ? (editedDoctor?.image || doctor.image) : doctor.image}
                                 alt={doctor.name}
+                                width={112}
+                                height={112}
                                 className="w-28 h-28 rounded-2xl object-cover border-4 border-white shadow-lg"
                             />
                             {isEditing && (

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Doctor } from '@/types';
 import { MapPin, X, Star, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -153,9 +154,11 @@ const MapContent: React.FC<{
                         <Popup>
                             <div className="p-2 min-w-[200px]">
                                 <div className="flex gap-3">
-                                    <img
+                                    <Image
                                         src={doctor.image}
                                         alt={doctor.name}
+                                        width={48}
+                                        height={48}
                                         className="w-12 h-12 rounded-lg object-cover"
                                     />
                                     <div>
