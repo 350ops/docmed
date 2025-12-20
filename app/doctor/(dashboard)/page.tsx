@@ -45,8 +45,6 @@ export default function DoctorDashboardPage() {
         }
     }, [doctor, journals, videoRoom]);
 
-    if (!doctor) return null;
-
     const confirmed = useMemo(
         () => appointments.filter((apt) => apt.status === "confirmed").length,
         [appointments]
@@ -55,6 +53,22 @@ export default function DoctorDashboardPage() {
         () => appointments.filter((apt) => apt.mode === "online").length,
         [appointments]
     );
+
+    const appointmentsForDay = useMemo(() => {
+        if (!selectedDate) return appointments;
+        const target = selectedDate.toDateString();
+        return appointments.filter(
+            (apt) => new Date(apt.dateTime).toDateString() === target
+        );
+    }, [appointments, selectedDate]);
+
+    // Mock dates with appointments
+    const appointmentDates = useMemo(
+        () => appointments.map((apt) => new Date(apt.dateTime)),
+        [appointments]
+    );
+
+    if (!doctor) return null;
 
     const stats = [
         {
@@ -86,20 +100,6 @@ export default function DoctorDashboardPage() {
             color: "bg-green-500",
         },
     ];
-
-    const appointmentsForDay = useMemo(() => {
-        if (!selectedDate) return appointments;
-        const target = selectedDate.toDateString();
-        return appointments.filter(
-            (apt) => new Date(apt.dateTime).toDateString() === target
-        );
-    }, [appointments, selectedDate]);
-
-    // Mock dates with appointments
-    const appointmentDates = useMemo(
-        () => appointments.map((apt) => new Date(apt.dateTime)),
-        [appointments]
-    );
 
     return (
         <div className="max-w-7xl mx-auto space-y-8">
