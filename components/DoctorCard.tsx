@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Star, MapPin, ShieldCheck, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 import { Doctor } from '@/types';
@@ -14,10 +14,40 @@ interface DoctorCardProps {
   onBook: (id: string, slot: string) => void;
 }
 
+interface DisplayDay {
+  date: Date;
+  dateStr: string;
+  dayName: string;
+  dayNum: number;
+  month: string;
+}
+
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
   const { user } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingSlot, setPendingSlot] = useState<string | null>(null);
+  const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    // Get next 7 days for display - only calculate on client
+    const days: DisplayDay[] = [];
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      days.push({
+        date,
+        dateStr: date.toISOString().split('T')[0],
+        dayName: date.toLocaleDateString('es-ES', { weekday: 'short' }),
+        dayNum: date.getDate(),
+        month: date.toLocaleDateString('es-ES', { month: 'short' })
+      });
+    }
+    setDisplayDays(days);
+  }, []);
 
   const handleBookClick = (date: string, time: string) => {
     const slot = `${date}T${time}:00`;
@@ -35,27 +65,6 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
       setPendingSlot(null);
     }
   };
-
-  // Get next 7 days for display
-  const getDisplayDays = () => {
-    const days: { date: Date; dateStr: string; dayName: string; dayNum: number; month: string }[] = [];
-    const today = new Date();
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      days.push({
-        date,
-        dateStr: date.toISOString().split('T')[0],
-        dayName: date.toLocaleDateString('es-ES', { weekday: 'short' }),
-        dayNum: date.getDate(),
-        month: date.toLocaleDateString('es-ES', { month: 'short' })
-      });
-    }
-    return days;
-  };
-
-  const displayDays = getDisplayDays();
 
   const getSlotCount = (dateStr: string) => {
     const day = doctor.availability.find(d => d.date === dateStr);
@@ -115,7 +124,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
           {/* Right side - Availability Grid (Zocdoc style) */}
           <div className="flex-1">
             <div className="grid grid-cols-7 gap-1">
-              {displayDays.map((day, i) => {
+              {mounted && displayDays.length > 0 ? displayDays.map((day, i) => {
                 const slotCount = getSlotCount(day.dateStr);
                 const firstSlot = getFirstSlot(day.dateStr);
                 const hasSlots = slotCount > 0;
@@ -146,7 +155,22 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
                     )}
                   </div>
                 );
-              })}
+              }) : (
+                // Placeholder during SSR/initial render
+                Array.from({ length: 7 }).map((_, i) => (
+                  <div key={i} className="text-center">
+                    <div className="text-[10px] text-gray-400 uppercase font-medium mb-1">
+                      —
+                    </div>
+                    <div className="text-xs text-gray-500 mb-1">
+                      —
+                    </div>
+                    <div className="w-full py-2 px-1 bg-gray-50 text-gray-300 rounded-lg text-xs">
+                      —
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Next available indicator */}

@@ -1526,6 +1526,11 @@ body {
   border-color: #ffffff4d;
 }
 
+.bg-\[\#0C6749\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(12 103 73 / var(--tw-bg-opacity, 1));
+}
+
 .bg-accent {
   background-color: hsl(var(--accent));
 }
@@ -1771,11 +1776,6 @@ body {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
-}
-
-.bg-\[\#0C6749\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(12 103 73 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-b {
@@ -3270,6 +3270,11 @@ body {
   color: rgb(16 185 129 / var(--tw-text-opacity, 1));
 }
 
+.hover\:text-emerald-200:hover {
+  --tw-text-opacity: 1;
+  color: rgb(167 243 208 / var(--tw-text-opacity, 1));
+}
+
 .hover\:text-foreground:hover {
   color: hsl(var(--foreground));
 }
@@ -3296,11 +3301,6 @@ body {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.hover\:text-emerald-200:hover {
-  --tw-text-opacity: 1;
-  color: rgb(167 243 208 / var(--tw-text-opacity, 1));
 }
 
 .hover\:underline:hover {
