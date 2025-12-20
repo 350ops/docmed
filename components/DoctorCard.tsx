@@ -77,23 +77,36 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
     return day?.slots[0];
   };
 
+  const getFirstAvailableDay = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const availableDay = doctor.availability.find(d => d.date >= today && d.slots.length > 0);
+    if (!availableDay) return null;
+    
+    if (availableDay.date === today) return 'Hoy';
+    
+    const date = new Date(availableDay.date);
+    return date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric' });
+  };
+
+  const nextAvailable = getFirstAvailableDay();
+
   return (
     <>
       <div className="card-accent-teal bg-white border border-gray-100 shadow-sm card-lift p-5 mb-4">
         <div className="flex flex-col lg:flex-row gap-5">
           {/* Left side - Doctor info */}
           <div className="flex gap-4 lg:w-1/3">
-            <Link href={`/doctor/${doctor.id}`} className="shrink-0">
+            <Link href={`/doctor/${doctor.id}`} className="shrink-0 group">
               <div className="relative">
                 <Image
                   src={doctor.image}
                   alt={doctor.name}
                   width={96}
                   height={96}
-                  className="w-24 h-24 rounded-2xl object-cover shadow-md ring-2 ring-white hover:ring-primary transition-all"
+                  className="w-24 h-24 rounded-2xl object-cover shadow-md ring-2 ring-white group-hover:ring-doctoralia-teal transition-all"
                 />
                 {doctor.isVerified && (
-                  <div className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full shadow ring-2 ring-white">
+                  <div className="absolute -bottom-1 -right-1 bg-doctoralia-teal text-white p-1 rounded-full shadow ring-2 ring-white">
                     <CheckCircle className="w-3 h-3" />
                   </div>
                 )}
@@ -101,10 +114,10 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
             </Link>
 
             <div className="min-w-0">
-              <Link href={`/doctor/${doctor.id}`} className="hover:text-primary transition">
+              <Link href={`/doctor/${doctor.id}`} className="hover:text-doctoralia-teal transition">
                 <h3 className="text-lg font-bold text-gray-900 truncate">{doctor.name}</h3>
               </Link>
-              <p className="text-primary font-semibold text-sm">{doctor.specialty}</p>
+              <p className="text-doctoralia-teal font-semibold text-sm">{doctor.specialty}</p>
 
               <div className="flex items-center gap-1 mt-2">
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
@@ -118,7 +131,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
               </div>
 
               <div className="flex items-center gap-1 text-gray-500 text-xs mt-1">
-                <ShieldCheck className="w-3 h-3 text-primary" />
+                <ShieldCheck className="w-3 h-3 text-doctoralia-teal" />
                 <span className="truncate">{doctor.insurances.slice(0, 2).join(', ')}</span>
               </div>
             </div>
@@ -146,10 +159,10 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
                     {hasSlots ? (
                       <button
                         onClick={() => handleBookClick(day.dateStr, firstSlot!)}
-                        className="w-full py-2 px-1 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg transition text-xs font-semibold group"
+                        className="w-full py-2 px-1 bg-teal-50 hover:bg-doctoralia-teal text-doctoralia-teal hover:text-white rounded-lg transition text-xs font-semibold group"
                       >
-                        <span className="group-hover:hidden">{slotCount}</span>
-                        <span className="hidden group-hover:inline">{firstSlot}</span>
+                        <span className="group-hover:hidden">{firstSlot}</span>
+                        <span className="hidden group-hover:inline">Reservar</span>
                       </button>
                     ) : (
                       <div className="w-full py-2 px-1 bg-gray-50 text-gray-300 rounded-lg text-xs">
@@ -179,16 +192,22 @@ const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onBook }) => {
             {/* Next available indicator */}
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="bg-green-50 text-green-700 gap-1">
-                  <Clock className="w-3 h-3" />
-                  Próxima: Hoy
-                </Badge>
-                <span className="text-sm text-gray-500">{doctor.priceRange}</span>
+                {nextAvailable ? (
+                  <Badge variant="secondary" className="bg-teal-50 text-doctoralia-teal gap-1">
+                    <Clock className="w-3 h-3" />
+                    Próxima: {nextAvailable}
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-gray-100 text-gray-500 gap-1">
+                    No hay citas próximamente
+                  </Badge>
+                )}
+                <span className="text-sm font-semibold text-gray-700">{doctor.priceRange}</span>
               </div>
 
               <Link href={`/doctor/${doctor.id}`}>
-                <Button variant="ghost" size="sm" className="gap-1 text-primary">
-                  Ver perfil
+                <Button variant="ghost" size="sm" className="gap-1 text-doctoralia-teal hover:text-[#059669] hover:bg-teal-50">
+                  Ver perfil completo
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </Link>

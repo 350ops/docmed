@@ -45,8 +45,6 @@ export default function DoctorDashboardPage() {
         }
     }, [doctor, journals, videoRoom]);
 
-    if (!doctor) return null;
-
     const confirmed = useMemo(
         () => appointments.filter((apt) => apt.status === "confirmed").length,
         [appointments]
@@ -55,6 +53,22 @@ export default function DoctorDashboardPage() {
         () => appointments.filter((apt) => apt.mode === "online").length,
         [appointments]
     );
+
+    const appointmentsForDay = useMemo(() => {
+        if (!selectedDate) return appointments;
+        const target = selectedDate.toDateString();
+        return appointments.filter(
+            (apt) => new Date(apt.dateTime).toDateString() === target
+        );
+    }, [appointments, selectedDate]);
+
+    // Mock dates with appointments
+    const appointmentDates = useMemo(
+        () => appointments.map((apt) => new Date(apt.dateTime)),
+        [appointments]
+    );
+
+    if (!doctor) return null;
 
     const stats = [
         {
@@ -87,20 +101,6 @@ export default function DoctorDashboardPage() {
         },
     ];
 
-    const appointmentsForDay = useMemo(() => {
-        if (!selectedDate) return appointments;
-        const target = selectedDate.toDateString();
-        return appointments.filter(
-            (apt) => new Date(apt.dateTime).toDateString() === target
-        );
-    }, [appointments, selectedDate]);
-
-    // Mock dates with appointments
-    const appointmentDates = useMemo(
-        () => appointments.map((apt) => new Date(apt.dateTime)),
-        [appointments]
-    );
-
     return (
         <div className="max-w-7xl mx-auto space-y-8">
             {/* Welcome Header */}
@@ -113,10 +113,12 @@ export default function DoctorDashboardPage() {
                         Aquí tienes un resumen de tu actividad reciente
                     </p>
                 </div>
-                <Button className="gap-2">
-                    <Plus className="w-4 h-4" />
-                    Nueva cita
-                </Button>
+                <Link href="/doctor/appointments">
+                    <Button className="gap-2 bg-doctoralia-teal hover:bg-[#059669]">
+                        <Plus className="w-4 h-4" />
+                        Añadir disponibilidad
+                    </Button>
+                </Link>
             </div>
 
             {/* Stats Grid */}

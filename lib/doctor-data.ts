@@ -176,6 +176,32 @@ export function getAppointments(doctorId: string): Appointment[] {
   return getDoctorRecord(doctorId)?.appointments || [];
 }
 
+export function getAllAppointmentsForPatient(patientId: string): (Appointment & { doctorName: string; doctorSpecialty: string; doctorImage: string })[] {
+  const records = loadRecords();
+  const patientAppointments: (Appointment & { doctorName: string; doctorSpecialty: string; doctorImage: string })[] = [];
+
+  records.forEach(record => {
+    record.appointments.forEach(apt => {
+      if (apt.patientId === patientId) {
+        patientAppointments.push({
+          ...apt,
+          doctorName: record.profile.name,
+          doctorSpecialty: record.profile.specialty,
+          doctorImage: record.profile.image
+        });
+      }
+    });
+  });
+
+  return patientAppointments.sort(
+    (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()
+  );
+}
+
+export function cancelAppointment(doctorId: string, appointmentId: string): DoctorRecord | null {
+  return updateAppointmentStatus(doctorId, appointmentId, 'cancelled');
+}
+
 export function addAppointment(
   doctorId: string,
   appointment: Appointment

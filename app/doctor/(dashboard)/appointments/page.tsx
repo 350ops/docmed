@@ -325,13 +325,34 @@ export default function DoctorAppointmentsPage() {
                                                 Unirse a videollamada
                                             </a>
                                         )}
-                                        {apt.status !== "confirmed" && (
+                                        {apt.status === "pending" && (
+                                            <>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="border-green-100 text-green-600 hover:bg-green-50"
+                                                    onClick={() => handleStatusChange(apt.id, "confirmed")}
+                                                >
+                                                    Confirmar
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="border-red-100 text-red-600 hover:bg-red-50"
+                                                    onClick={() => handleStatusChange(apt.id, "cancelled")}
+                                                >
+                                                    Rechazar
+                                                </Button>
+                                            </>
+                                        )}
+                                        {apt.status === "confirmed" && (
                                             <Button
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => handleStatusChange(apt.id, "confirmed")}
+                                                className="border-red-100 text-red-600 hover:bg-red-50"
+                                                onClick={() => handleStatusChange(apt.id, "cancelled")}
                                             >
-                                                Confirmar
+                                                Cancelar
                                             </Button>
                                         )}
                                     </div>

@@ -40,6 +40,7 @@ export interface SearchFilters {
 export interface Appointment {
   id: string;
   doctorId: string;
+  patientId?: string;
   patientName: string;
   dateTime: string;
   status: AppointmentStatus;

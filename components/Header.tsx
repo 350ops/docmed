@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, Menu, Search, ChevronDown, LogOut, X } from 'lucide-react';
+import { User, Menu, Search, ChevronDown, LogOut, X, Calendar } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import AuthModal from './AuthModal';
 
@@ -86,6 +86,10 @@ const Header: React.FC = () => {
                         <p className="text-sm text-gray-500">{user.email}</p>
                       </div>
                       <div className="py-1">
+                        <Link href="/appointments" className="w-full px-4 py-2.5 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition">
+                          <Calendar className="w-4 h-4" />
+                          Mis citas
+                        </Link>
                         <button className="w-full px-4 py-2.5 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition">
                           <User className="w-4 h-4" />
                           Mi perfil
