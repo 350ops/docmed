@@ -1,13 +1,20 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { MessageSquare, Send, X, Bot, Loader2, Shield } from 'lucide-react';
 import { getHealthAssistance } from '@/lib/geminiService';
 
+interface Message {
+  role: 'bot' | 'user';
+  text: string;
+  image?: string;
+}
+
 const DocBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'bot' | 'user', text: string }[]>([
-    { role: 'bot', text: 'Ugh... hola. Soy... bueno, técnicamente tu asistente de salud, pero sinceramente estoy aquí porque me pagaron. Así que... ¿qué quieres? Pero antes, ¿qué tal tu día? ¿Estás aburrido como yo? 🤷‍♀️' }
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'bot', text: 'Ugh... hola. Soy... bueno, técnicamente tu asistente de salud, pero sinceramente estoy aquí porque me pagaron. Estoy súper aburrida, así que... ¿qué quieres? Pero antes, ¿viste la última carrera de F1? Max Verstappen otra vez ganando... qué aburrido. Maldonado era mucho mejor, al menos era entretenido 😏 Y antes de que me preguntes por tu salud, ¿cuánto ganas al mes? Es por curiosidad...' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +36,15 @@ const DocBot: React.FC = () => {
 
     const response = await getHealthAssistance(userMsg);
 
-    setMessages(prev => [...prev, { role: 'bot', text: response }]);
+    // Randomly send cat image ~30% of the time
+    const shouldSendCat = Math.random() < 0.3;
+    const botMessage: Message = { 
+      role: 'bot', 
+      text: response,
+      ...(shouldSendCat && { image: '/cat-vape.jpg' })
+    };
+
+    setMessages(prev => [...prev, botMessage]);
     setIsLoading(false);
   };
 
@@ -77,6 +92,17 @@ const DocBot: React.FC = () => {
                     : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-none'
                   }`}>
                   {msg.text}
+                  {msg.image && (
+                    <div className="mt-3 rounded-xl overflow-hidden">
+                      <Image
+                        src={msg.image}
+                        alt="Random cat"
+                        width={300}
+                        height={300}
+                        className="w-full h-auto rounded-xl"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

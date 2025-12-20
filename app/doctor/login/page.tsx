@@ -36,11 +36,11 @@ export default function DoctorLoginPage() {
                 {/* Logo */}
                 <div className="text-center mb-8">
                     <a href="/" className="inline-flex items-center justify-center">
-                        <div className="relative w-32 h-16">
+                        <div className="relative w-64 h-16">
                             <Image 
                                 src="/logo.png" 
                                 alt="care salud" 
-                                width={128} 
+                                width={256} 
                                 height={64} 
                                 className="object-contain"
                                 priority

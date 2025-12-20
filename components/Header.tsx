@@ -33,12 +33,12 @@ const Header: React.FC = () => {
           <div className="flex justify-between items-center h-18 py-4">
             <div className="flex items-center gap-10">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="relative w-40 h-20 group-hover:scale-105 transition-transform">
+                <div className="relative w-48 h-12 group-hover:scale-105 transition-transform">
                   <Image 
                     src="/logo.png" 
                     alt="care salud" 
-                    width={160} 
-                    height={80} 
+                    width={192} 
+                    height={48} 
                     className="object-contain"
                     priority
                   />
