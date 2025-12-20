@@ -112,6 +112,14 @@ export default function LoginScreen() {
             className="mb-6"
           />
 
+          <Button
+            title="Trial - Skip Login"
+            onPress={() => router.replace('/(tabs)/')}
+            variant="ghost"
+            size="large"
+            className="mb-6"
+          />
+
           <View className="flex-row justify-center">
             <ThemedText className="text-light-subtext dark:text-dark-subtext">Don't have an account? </ThemedText>
             <Link href="/screens/signup" asChild>

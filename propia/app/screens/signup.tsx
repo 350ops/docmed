@@ -7,10 +7,12 @@ import { Button } from '@/components/Button';
 import useThemeColors from '@/app/contexts/ThemeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
+import { useBusinessMode } from '@/app/contexts/BusinesModeContext';
 
 export default function SignupScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
+  const { toggleMode, isBusinessMode } = useBusinessMode();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -195,10 +197,19 @@ export default function SignupScreen() {
             onPress={handleSignup}
             loading={isLoading}
             size="large"
-            className="mb-6"
+            className="mb-4"
           />
 
-
+          <Button
+            title="Trial - Skip Registration"
+            onPress={() => {
+              if (!isBusinessMode) toggleMode();
+              router.replace('/(tabs)/dashboard');
+            }}
+            variant="ghost"
+            size="large"
+            className="mb-6"
+          />
 
           <View className="flex-row justify-center">
             <ThemedText className="text-light-subtext dark:text-dark-subtext">Already have an account? </ThemedText>

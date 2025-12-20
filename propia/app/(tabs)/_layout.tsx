@@ -1,100 +1,98 @@
-import { useThemeColors } from 'app/contexts/ThemeColors';
-import { TabButton } from 'components/TabButton';
-import { Tabs, TabList, TabTrigger, TabSlot } from 'expo-router/ui';
-import { View } from 'react-native';
-import React from 'react';
+import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useBusinessMode } from '@/app/contexts/BusinesModeContext';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Layout() {
-  const colors = useThemeColors();
   const { isBusinessMode } = useBusinessMode();
-  const insets = useSafeAreaInsets();
 
+  if (isBusinessMode) {
+    // Doctor Mode tabs (for medical professionals)
+    return (
+      <NativeTabs>
+        <NativeTabs.Trigger name="dashboard">
+          <Icon
+            sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }}
+            drawable="ic_menu_dashboard"
+          />
+          <Label>Panel</Label>
+        </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="calendar">
+          <Icon
+            sf={{ default: 'calendar', selected: 'calendar.badge.clock' }}
+            drawable="ic_menu_calendar"
+          />
+          <Label>Agenda</Label>
+        </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="listings">
+          <Icon
+            sf={{ default: 'stethoscope', selected: 'stethoscope.circle.fill' }}
+            drawable="ic_menu_stethoscope"
+          />
+          <Label>Mi Perfil</Label>
+        </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="chat">
+          <Icon
+            sf={{ default: 'message', selected: 'message.fill' }}
+            drawable="ic_menu_chat"
+          />
+          <Label>Mensajes</Label>
+        </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="profile">
+          <Icon
+            sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }}
+            drawable="ic_menu_account"
+          />
+          <Label>Perfil</Label>
+        </NativeTabs.Trigger>
+      </NativeTabs>
+    );
+  }
+
+  // Patient Mode tabs (for users searching doctors)
   return (
-    <Tabs>
-      <TabSlot />
-      <TabList
-        style={{
-          backgroundColor: colors.bg,
-          borderTopColor: colors.secondary,
-          borderTopWidth: 1,
-          paddingBottom: insets.bottom,
-        }}
-      >
-        {/* Doctor Mode tabs (for medical professionals) */}
-        <TabTrigger
-          name="dashboard"
-          href="/(tabs)/dashboard"
-          asChild
-          style={{ display: isBusinessMode ? 'flex' : 'none' }}
-        >
-          <TabButton labelAnimated={false} icon="LayoutDashboard">Panel</TabButton>
-        </TabTrigger>
-        <TabTrigger
-          name="calendar"
-          href="/(tabs)/calendar"
-          asChild
-          style={{ display: isBusinessMode ? 'flex' : 'none' }}
-        >
-          <TabButton labelAnimated={false} icon="CalendarFold">Agenda</TabButton>
-        </TabTrigger>
-        <TabTrigger
-          name="listings"
-          href="/(tabs)/listings"
-          asChild
-          style={{ display: isBusinessMode ? 'flex' : 'none' }}
-        >
-          <TabButton labelAnimated={false} icon="Stethoscope">Mi Perfil</TabButton>
-        </TabTrigger>
+    <NativeTabs>
+      <NativeTabs.Trigger name="(home)">
+        <Icon
+          sf={{ default: 'magnifyingglass', selected: 'magnifyingglass.circle.fill' }}
+          drawable="ic_menu_search"
+        />
+        <Label>Buscar</Label>
+      </NativeTabs.Trigger>
 
-        {/* Patient Mode tabs (for users searching doctors) */}
-        <TabTrigger
-          name="(home)"
-          href="/(tabs)/(home)"
-          asChild
-          style={{ display: isBusinessMode ? 'none' : 'flex' }}
-        >
-          <TabButton labelAnimated={false} icon="Search">Buscar</TabButton>
-        </TabTrigger>
+      <NativeTabs.Trigger name="favorites">
+        <Icon
+          sf={{ default: 'heart', selected: 'heart.fill' }}
+          drawable="ic_menu_favorites"
+        />
+        <Label>Favoritos</Label>
+      </NativeTabs.Trigger>
 
-        <TabTrigger
-          name="favorites"
-          href="/favorites"
-          asChild
-          style={{ display: isBusinessMode ? 'none' : 'flex' }}
-        >
-          <TabButton labelAnimated={false} icon="Heart">Favoritos</TabButton>
-        </TabTrigger>
+      <NativeTabs.Trigger name="trips">
+        <Icon
+          sf={{ default: 'calendar.badge.checkmark', selected: 'calendar.badge.checkmark' }}
+          drawable="ic_menu_appointments"
+        />
+        <Label>Citas</Label>
+      </NativeTabs.Trigger>
 
-        <TabTrigger
-          name="trips"
-          href="/trips"
-          asChild
-          style={{ display: isBusinessMode ? 'none' : 'flex' }}
-        >
-          <TabButton labelAnimated={false} icon="CalendarCheck">Citas</TabButton>
-        </TabTrigger>
+      <NativeTabs.Trigger name="chat">
+        <Icon
+          sf={{ default: 'message', selected: 'message.fill' }}
+          drawable="ic_menu_chat"
+        />
+        <Label>Mensajes</Label>
+      </NativeTabs.Trigger>
 
-        {/* Shared tabs (both modes) */}
-        <TabTrigger
-          name="chat"
-          href="/(tabs)/chat"
-          asChild
-          style={{ display: 'flex' }}
-        >
-          <TabButton labelAnimated={false} hasBadge icon="MessageSquare">Mensajes</TabButton>
-        </TabTrigger>
-
-        <TabTrigger
-          name="profile"
-          href="/profile"
-          asChild
-          style={{ display: 'flex' }}
-        >
-          <TabButton labelAnimated={false} icon="CircleUser">Perfil</TabButton>
-        </TabTrigger>
-      </TabList>
-    </Tabs>
+      <NativeTabs.Trigger name="profile">
+        <Icon
+          sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }}
+          drawable="ic_menu_account"
+        />
+        <Label>Perfil</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

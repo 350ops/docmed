@@ -18,7 +18,6 @@ export default function HomeLayout() {
     return (
         <ScrollContext.Provider value={scrollY}>
             <View className="flex-1 bg-light-primary dark:bg-dark-primary" style={{ paddingTop: insets.top }}>
-                <SearchBar />
                 <HomeTabs scrollY={scrollY} />
                 <View className='flex-1'>
                     <Stack screenOptions={{ headerShown: false, animation: 'none' }} />

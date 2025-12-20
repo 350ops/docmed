@@ -1,7 +1,7 @@
 import Header, { HeaderIcon } from '@/components/Header';
 import ThemeScroller from '@/components/ThemeScroller';
 import React, { useContext } from 'react';
-import { View, Text, Pressable, Image, Animated } from 'react-native';
+import { View, Text, Pressable, Animated, ScrollView } from 'react-native';
 import Section from '@/components/layout/Section';
 import { CardScroller } from '@/components/CardScroller';
 import Card from '@/components/Card';
@@ -12,16 +12,23 @@ import useShadow, { shadowPresets } from '@/utils/useShadow';
 import { router } from 'expo-router';
 import { MOCK_DOCTORS } from '@/lib/doctors';
 import Icon from '@/components/Icon';
+import SearchBar from '@/components/SearchBar';
+
+// Popular specialties
+const POPULAR_SPECIALTIES = [
+    'Psiquiatría',
+    'Anestesiología',
+    'Angiología y Cirugía Vascular',
+    'Cardiología',
+    'Medicina General',
+    'Pediatría',
+    'Urología',
+
+
+];
 
 const HomeScreen = () => {
     const scrollY = useContext(ScrollContext);
-
-    // Group doctors by specialty
-    const getDoctorsByCity = (city: string) =>
-        MOCK_DOCTORS.filter(d => d.city === city).slice(0, 4);
-
-    const getDoctorsBySpecialty = (specialty: string) =>
-        MOCK_DOCTORS.filter(d => d.specialty === specialty).slice(0, 4);
 
     // Get top rated doctors
     const topRatedDoctors = [...MOCK_DOCTORS].sort((a, b) => b.rating - a.rating).slice(0, 4);
@@ -34,18 +41,39 @@ const HomeScreen = () => {
             )}
             scrollEventThrottle={16}
         >
-            <AnimatedView animation="scaleIn" className='flex-1 mt-4'>
-                {/* Quick action banner */}
+            <AnimatedView animation="scaleIn" className='flex-1'>
+                {/* Search Bar */}
+                <SearchBar />
+
+                {/* Popular Specialties Chips */}
+                <View className='px-4 py-2 items-center'>
+                    <View className='flex-row flex-wrap justify-center'>
+                        <ThemedText className='text-xs text-gray-500 mr-2 self-center'>Populares:</ThemedText>
+                        {POPULAR_SPECIALTIES.map((specialty, index) => (
+                            <Pressable
+                                key={index}
+                                onPress={() => router.push(`/screens/map?specialty=${specialty}`)}
+                                className='px-3 py-1.5 bg-gray-100 dark:bg-dark-secondary rounded-full mr-2 mb-2 border border-gray-200 dark:border-gray-700'
+                            >
+                                <ThemedText className='text-xs text-gray-700 dark:text-gray-300'>
+                                    {specialty}
+                                </ThemedText>
+                            </Pressable>
+                        ))}
+                    </View>
+                </View>
+
+                {/* CTA Banner */}
                 <Pressable
                     onPress={() => router.push('/screens/map')}
                     style={{ ...shadowPresets.large }}
-                    className='p-5 mb-8 flex flex-row items-center rounded-2xl bg-teal-500'
+                    className='mx-4 p-5 mb-6 flex flex-row items-center rounded-2xl bg-teal-500'
                 >
-                    <View className='flex-1 pr-4'>
-                        <ThemedText className='text-lg font-bold text-white mb-1'>
-                            ¿Necesitas atención médica?
+                    <View className='flex-1 pr-4 items-center'>
+                        <ThemedText className='text-xl font-bold text-white mb-1 text-center'>
+                            Necesitas cita para{'\n'}hoy mismo?
                         </ThemedText>
-                        <ThemedText className='text-sm text-white opacity-90'>
+                        <ThemedText className='text-sm text-white opacity-90 text-center'>
                             Encuentra doctores cerca de ti
                         </ThemedText>
                     </View>
@@ -54,29 +82,18 @@ const HomeScreen = () => {
                     </View>
                 </Pressable>
 
-                {/* Popular specialties chips */}
-                <Section title="Especialidades populares" titleSize="lg" className="mb-2">
-                    <CardScroller space={10} className='mt-2 pb-2'>
-                        {['Medicina General', 'Psicología', 'Dermatología', 'Ginecología', 'Pediatría', 'Cardiología'].map((specialty, index) => (
-                            <Pressable
-                                key={`specialty-${index}`}
-                                onPress={() => router.push(`/screens/map?specialty=${specialty}`)}
-                                className='px-4 py-3 bg-teal-50 dark:bg-dark-secondary rounded-full border border-teal-200 dark:border-teal-800'
-                            >
-                                <ThemedText className='text-sm font-medium text-teal-700 dark:text-teal-300'>
-                                    {specialty}
-                                </ThemedText>
-                            </Pressable>
-                        ))}
-                    </CardScroller>
-                </Section>
+                {/* Especialidades populares title */}
+                <View className='px-4 mb-2 items-center'>
+                    <ThemedText className='text-lg font-bold'>Especialidades populares</ThemedText>
+                </View>
 
-                {/* Top rated doctors */}
+                {/* Mejor valorados section */}
                 <Section
                     title="Mejor valorados"
                     titleSize="lg"
                     link="/screens/map"
-                    linkText="Ver todos"
+                    linkText=">"
+                    className="items-center"
                 >
                     <CardScroller space={15} className='mt-1.5 pb-4'>
                         {topRatedDoctors.map((doctor, index) => (
@@ -97,96 +114,18 @@ const HomeScreen = () => {
                     </CardScroller>
                 </Section>
 
-                {/* Doctors in Madrid */}
-                <Section
-                    title="Doctores en Madrid"
-                    titleSize="lg"
-                    link="/screens/map?city=Madrid"
-                    linkText="Ver todos"
-                >
-                    <CardScroller space={15} className='mt-1.5 pb-4'>
-                        {getDoctorsByCity('Madrid').map((doctor, index) => (
-                            <Card
-                                key={`madrid-${doctor.id}`}
-                                title={doctor.name}
-                                subtitle={doctor.specialty}
-                                rounded="2xl"
-                                hasFavorite
-                                rating={doctor.rating}
-                                href={`/screens/doctor-detail?id=${doctor.id}`}
-                                price={doctor.priceRange.split(' - ')[0]}
-                                width={160}
-                                imageHeight={160}
-                                image={{ uri: doctor.image }}
-                            />
-                        ))}
-                    </CardScroller>
-                </Section>
-
-                {/* Doctors in Barcelona */}
-                <Section
-                    title="Doctores en Barcelona"
-                    titleSize="lg"
-                    link="/screens/map?city=Barcelona"
-                    linkText="Ver todos"
-                >
-                    <CardScroller space={15} className='mt-1.5 pb-4'>
-                        {getDoctorsByCity('Barcelona').map((doctor, index) => (
-                            <Card
-                                key={`barcelona-${doctor.id}`}
-                                title={doctor.name}
-                                subtitle={doctor.specialty}
-                                rounded="2xl"
-                                hasFavorite
-                                rating={doctor.rating}
-                                href={`/screens/doctor-detail?id=${doctor.id}`}
-                                price={doctor.priceRange.split(' - ')[0]}
-                                width={160}
-                                imageHeight={160}
-                                image={{ uri: doctor.image }}
-                            />
-                        ))}
-                    </CardScroller>
-                </Section>
-
-                {/* Psychology section */}
-                <Section
-                    title="Psicólogos destacados"
-                    titleSize="lg"
-                    link="/screens/map?specialty=Psicología"
-                    linkText="Ver todos"
-                >
-                    <CardScroller space={15} className='mt-1.5 pb-4'>
-                        {getDoctorsBySpecialty('Psicología').map((doctor, index) => (
-                            <Card
-                                key={`psy-${doctor.id}`}
-                                title={doctor.name}
-                                subtitle={doctor.location}
-                                rounded="2xl"
-                                hasFavorite
-                                rating={doctor.rating}
-                                href={`/screens/doctor-detail?id=${doctor.id}`}
-                                price={doctor.priceRange.split(' - ')[0]}
-                                width={160}
-                                imageHeight={160}
-                                image={{ uri: doctor.image }}
-                            />
-                        ))}
-                    </CardScroller>
-                </Section>
-
                 {/* Call to action for doctors */}
-                <View className='mx-4 mb-8 p-6 bg-coral-50 dark:bg-coral-900/20 rounded-2xl border border-coral-200 dark:border-coral-800'>
-                    <View className='flex-row items-center mb-3'>
-                        <Icon name="Stethoscope" size={24} className='mr-3 text-coral-500' />
+                <View className='mx-2 mb-4 p-6 bg-coral-50 dark:bg-coral-900/20 rounded-2xl border border-coral-200 dark:border-coral-800 items-center'>
+                    <View className='flex-row items-center mb-3 justify-center'>
+
                         <ThemedText className='text-lg font-bold'>¿Eres profesional de la salud?</ThemedText>
                     </View>
-                    <ThemedText className='text-sm text-light-subtext dark:text-dark-subtext mb-4'>
+                    <ThemedText className='text-sm text-light-subtext dark:text-dark-subtext mb-4 text-center'>
                         Únete a CareSalud y conecta con miles de pacientes
                     </ThemedText>
                     <Pressable
                         onPress={() => router.push('/screens/signup')}
-                        className='bg-coral-500 py-3 px-6 rounded-xl self-start'
+                        className='bg-coral-500 py-3 px-6 rounded-xl'
                     >
                         <ThemedText className='text-white font-semibold'>Registrarme como doctor</ThemedText>
                     </Pressable>

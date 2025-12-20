@@ -27,7 +27,7 @@ const SearchBar = (props: any) => {
                         style={{ elevation: 10, height: 50, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8.84, shadowOffset: { width: 0, height: 0 } }}
                         className='bg-light-primary flex-row justify-center items-center relative z-50 py-4 px-10 mt-3 mb-4 dark:bg-white/20 rounded-full'>
                         <Icon name="Search" size={16} strokeWidth={3} className="text-teal-500" />
-                        <ThemedText className='text-black dark:text-white font-medium ml-2 mr-4'>Buscar especialidad o médico...</ThemedText>
+                        <ThemedText className='text-black dark:text-white font-medium ml-2 mr-4'>Buscar especialidad...</ThemedText>
                     </Animated.View>
                 </Pressable>
             </View>
@@ -164,7 +164,7 @@ const SpecialtySearch = ({ searchQuery, setSearchQuery }: { searchQuery: string,
                 <Icon name="Stethoscope" className='absolute left-4 top-1/2 -translate-y-1/2 text-teal-500' size={16} strokeWidth={2} />
                 <TextInput
                     className='p-4 pl-12 mt-4 border border-teal-300 dark:border-teal-700 rounded-xl text-black dark:text-white'
-                    placeholder='Buscar especialidad o médico...'
+                    placeholder='Buscar especialidad'
                     placeholderTextColor={colors.placeholder}
                     value={searchQuery}
                     onChangeText={setSearchQuery}
