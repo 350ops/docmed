@@ -62,12 +62,12 @@ export default function Layout() {
         <Label>Buscar</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="favorites">
+      <NativeTabs.Trigger name="map">
         <Icon
-          sf={{ default: 'heart', selected: 'heart.fill' }}
-          drawable="ic_menu_favorites"
+          sf={{ default: 'map', selected: 'map.fill' }}
+          drawable="ic_menu_map"
         />
-        <Label>Favoritos</Label>
+        <Label>Mapa</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="trips">
