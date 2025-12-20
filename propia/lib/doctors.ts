@@ -1,8 +1,6 @@
 // CareSalud - Mock Doctor Data
 // Adapted from web app for mobile
 
-import { ImageSourcePropType } from 'react-native';
-
 export interface DayAvailability {
     date: string;
     slots: string[];
@@ -17,7 +15,7 @@ export interface Doctor {
     rating: number;
     reviewCount: number;
     priceRange: string;
-    image: string | ImageSourcePropType;
+    image: string;
     insurances: string[];
     bio: string;
     availability: DayAvailability[];
@@ -230,7 +228,7 @@ export const MOCK_DOCTORS: Doctor[] = [
         rating: 4.9,
         reviewCount: 287,
         priceRange: '75€ - 110€',
-        image: require('@/assets/img/doctor_maria.png'),
+        image: 'https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=400&fit=crop&crop=face',
         insurances: ['Sanitas', 'Adeslas', 'DKV', 'Caser'],
         bio: 'Dermatóloga especializada en dermatología estética y tratamiento del acné. Experta en peelings químicos, botox y tratamientos láser para rejuvenecimiento facial.',
         availability: generateWeeklyAvailability(),
@@ -250,7 +248,7 @@ export const MOCK_DOCTORS: Doctor[] = [
         rating: 4.8,
         reviewCount: 356,
         priceRange: '65€ - 95€',
-        image: require('@/assets/img/doctor_carla.png'),
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
         insurances: ['Mapfre', 'Sanitas', 'Adeslas', 'Asisa'],
         bio: 'Psicóloga clínica especializada en trastornos de ansiedad, depresión y terapia de pareja. Enfoque integrador combinando terapia cognitivo-conductual y mindfulness.',
         availability: generateWeeklyAvailability(),
@@ -270,7 +268,7 @@ export const MOCK_DOCTORS: Doctor[] = [
         rating: 4.9,
         reviewCount: 412,
         priceRange: '55€ - 85€',
-        image: require('@/assets/img/doctor_lucia.png'),
+        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face',
         insurances: ['Adeslas', 'Sanitas', 'AXA', 'DKV'],
         bio: 'Pediatra con especial dedicación a la lactancia materna, desarrollo infantil y vacunación. Atención cálida y cercana para los más pequeños de la familia.',
         availability: generateWeeklyAvailability(),
@@ -290,7 +288,7 @@ export const MOCK_DOCTORS: Doctor[] = [
         rating: 4.7,
         reviewCount: 198,
         priceRange: '60€ - 100€',
-        image: require('@/assets/img/doctor_ana.png'),
+        image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop&crop=face',
         insurances: ['Caser', 'Adeslas', 'Mapfre', 'Sanitas'],
         bio: 'Ginecóloga con enfoque en salud reproductiva, control de embarazo y menopausia. Ecografías 3D/4D y seguimiento personalizado de cada paciente.',
         availability: generateWeeklyAvailability(),

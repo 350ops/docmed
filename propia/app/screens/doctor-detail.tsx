@@ -122,7 +122,7 @@ const DoctorDetail = () => {
                 {/* Doctor Image */}
                 <View className="h-[350px] relative">
                     <Image
-                        source={typeof doctor.image === 'string' ? { uri: doctor.image } : doctor.image}
+                        source={{ uri: doctor.image }}
                         className="w-full h-full"
                         resizeMode="cover"
                     />
