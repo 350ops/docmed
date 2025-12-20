@@ -22,7 +22,7 @@ import { MOCK_DOCTORS } from '@/lib/doctors';
 const savedItems = MOCK_DOCTORS.slice(0, 6).map((doctor) => ({
   id: doctor.id,
   title: doctor.name,
-  descrition: doctor.specialty,
+  description: doctor.specialty,
   image: { uri: doctor.image },
   doctorId: doctor.id,
 }));
@@ -40,27 +40,31 @@ const FavoritesScreen = () => {
             onPress={() => setIsEditMode(!isEditMode)}
           />
         ]}
-          title="Favorites"
+          title=""
           variant="collapsibleTitle"
           scrollY={scrollY}
         />
         <ThemeScroller
           onScroll={scrollHandler}
           scrollEventThrottle={scrollEventThrottle}
-          className='pt-4'
+          className='pt-4 px-global'
         >
-
-
+          <Section
+            title="Favoritos"
+            subtitle="Tus especialistas y servicios guardados"
+            titleSize="3xl"
+            className="mb-6"
+          />
 
           {savedItems.length > 0 ? (
-            <Grid className='mt-2' columns={2} spacing={20} >
+            <Grid columns={2} spacing={20} >
               {savedItems.map((item) => (
                 <Card
                   href={`/screens/doctor-detail?id=${item.doctorId}`}
                   key={item.id}
                   title={item.title}
                   image={item.image}
-                  description={item.descrition}
+                  description={item.description}
                   imageHeight={180}
                   rounded='2xl'
                 >
@@ -84,43 +88,5 @@ const FavoritesScreen = () => {
   );
 };
 
-interface SavedItemCardProps {
-  title: string;
-  image: any;
-  price: string;
-  rating: number;
-}
+export default FavoritesScreen;
 
-const SavedItemCard = ({ title, image, price, rating }: SavedItemCardProps) => {
-  return (
-    <Link asChild href="/screens/product-detail">
-      <TouchableOpacity
-        style={{
-          ...shadowPresets.card
-        }}
-        activeOpacity={0.8} className='w-full mb-4 flex flex-row rounded-lg bg-light-secondary dark:bg-dark-secondary'>
-        <View className='w-1/3 h-[110px] relative'>
-          <Image source={image} className='w-full h-full rounded-l-lg' />
-          <LinearGradient
-            dither={false}
-            colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0)']}
-            className='absolute w-full h-full top-0 left-0 items-start justify-start p-3 rounded-l-lg'
-          >
-            <Favorite initialState={true} size={20} isWhite />
-          </LinearGradient>
-        </View>
-        <View className='p-3 flex-1 justify-between'>
-          <View className='flex-1 justify-start'>
-            <ThemedText className='text-sm font-semibold'>{title}</ThemedText>
-          </View>
-          <View className='flex-row justify-between items-end flex-1'>
-            <ShowRating size='sm' rating={rating} />
-            <ThemedText className='text-sm font-semibold'>{price}</ThemedText>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Link>
-  );
-};
-
-export default FavoritesScreen; 
