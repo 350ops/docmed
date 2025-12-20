@@ -11,6 +11,8 @@ import ActionSheetThemed from '@/components/ActionSheetThemed';
 import Icon from '@/components/Icon';
 import PageLoader from '@/components/PageLoader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { mockChats } from '@/lib/chats';
+import { getAIResponse, AIMessage } from '@/lib/ai';
 
 interface Message {
     id: string;
@@ -19,33 +21,26 @@ interface Message {
     isSent: boolean;
 }
 
-// Mock conversation data
-const mockMessages: Message[] = [
-    { id: '1', text: 'Hey there! How are you?', timestamp: '9:30 AM', isSent: false },
-    { id: '2', text: 'Hi! I\'m doing great, thanks for asking. How about you?', timestamp: '9:31 AM', isSent: true },
-    { id: '3', text: 'I\'m good too! Just wanted to discuss the project updates.', timestamp: '9:32 AM', isSent: false },
-    { id: '4', text: 'Sure! I\'ve been working on the new features we discussed last week. Made some good progress!', timestamp: '9:33 AM', isSent: true },
-    { id: '5', text: 'That\'s great to hear! Could you share some details about what you\'ve completed so far?', timestamp: '9:34 AM', isSent: false },
-    { id: '6', text: 'Of course! I\'ve implemented the user authentication system and started working on the dashboard layout. I\'ll send you the documentation later today.', timestamp: '9:35 AM', isSent: true },
-    { id: '7', text: 'Perfect! Looking forward to reviewing it. Let me know if you need any help or clarification.', timestamp: '9:36 AM', isSent: false },
-];
-
-// Mock user data
-const mockUser = {
-    id: '1',
-    name: 'John Doe',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-};
 
 export default function ChatDetailScreen() {
     const insets = useSafeAreaInsets();
     const { id } = useLocalSearchParams();
+    const chatUser = mockChats.find(u => u.id === id) || mockChats[0];
+
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState(mockMessages);
+    const [messages, setMessages] = useState<Message[]>(
+        id === '5' ? [
+            { id: '1', text: 'Hola... uugh, ¿estás ahí? Estoy aburridísima...', timestamp: 'Ahora', isSent: false }
+        ] : [
+            { id: '1', text: 'Hola, ¿cómo estás?', timestamp: '9:30 AM', isSent: false },
+            { id: '2', text: '¡Hola! Todo bien, gracias. ¿Y tú?', timestamp: '9:31 AM', isSent: true },
+        ]
+    );
     const actionSheetRef = useRef<ActionSheetRef>(null);
     const inputRef = useRef<TextInput>(null);
     const flatListRef = useRef<FlatList>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isTyping, setIsTyping] = useState(false);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     const scrollToBottom = useCallback(() => {
@@ -97,16 +92,43 @@ export default function ChatDetailScreen() {
         return <PageLoader text="Loading chat..." />;
     }
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (message.trim()) {
+            const userText = message.trim();
             const newMessage: Message = {
                 id: Date.now().toString(),
-                text: message.trim(),
+                text: userText,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 isSent: true,
             };
-            setMessages([...messages, newMessage]);
+
+            const updatedMessages = [...messages, newMessage];
+            setMessages(updatedMessages);
             setMessage('');
+
+            // AI Bot specific logic
+            if (id === '5') {
+                setIsTyping(true);
+
+                // Convert current messages to AI format
+                const aiHistory: AIMessage[] = updatedMessages.map(m => ({
+                    role: m.isSent ? 'user' : 'assistant',
+                    content: m.text
+                }));
+
+                // Add delay for realism
+                setTimeout(async () => {
+                    const aiResponse = await getAIResponse(aiHistory);
+                    const botMessage: Message = {
+                        id: (Date.now() + 1).toString(),
+                        text: aiResponse,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        isSent: false,
+                    };
+                    setMessages(prev => [...prev, botMessage]);
+                    setIsTyping(false);
+                }, 1500);
+            }
         }
     };
 
@@ -141,7 +163,7 @@ export default function ChatDetailScreen() {
                 //style={{ paddingBottom: insets.bottom }}
                 className="flex-1 bg-light-primary dark:bg-dark-primary">
                 <Header
-                    title={mockUser.name}
+                    title={chatUser.name}
                     className='border-b border-light-secondary dark:border-dark-secondary'
                     showBackButton
                     rightComponents={rightComponents}
@@ -149,8 +171,8 @@ export default function ChatDetailScreen() {
                         <View className='mr-2'>
                             <Avatar
                                 size="sm"
-                                src={mockUser.avatar}
-                                name={mockUser.name}
+                                src={chatUser.avatar}
+                                name={chatUser.name}
                                 className='mr-1'
                             />
                         </View>
@@ -163,8 +185,15 @@ export default function ChatDetailScreen() {
                     data={messages}
                     renderItem={renderMessage}
                     keyExtractor={(item) => item.id}
+                    ListFooterComponent={
+                        isTyping ? (
+                            <View className="px-4 py-2 ml-4 mb-4 bg-light-secondary dark:bg-dark-secondary rounded-2xl self-start">
+                                <ThemedText className="italic text-xs opacity-60">Escribiendo...</ThemedText>
+                            </View>
+                        ) : null
+                    }
                     contentContainerStyle={{
-                        paddingTop: 20, justifyContent: 'flex-end'
+                        paddingTop: 20, paddingBottom: 20
                     }}
                     onContentSizeChange={scrollToBottom}
                     onLayout={scrollToBottom}

@@ -323,7 +323,7 @@ const Header: React.FC<HeaderProps> = ({
 export default Header;
 
 type HeaderItemProps = {
-  href: string;
+  href?: string;
   icon: IconName;
   className?: string;
   hasBadge?: boolean;
@@ -347,7 +347,7 @@ export const HeaderIcon = ({ href, icon, hasBadge, onPress, className = '', isWh
         </View>
       </TouchableOpacity>
     ) : (
-      <Link href={href} asChild>
+      <Link href={href || '#'} asChild>
         <TouchableOpacity className='overflow-visible mb-2'>
           <View className={`flex-row items-center justify-center relative overflow-visible h-7 w-7 ${className}`}>
             {hasBadge && (
