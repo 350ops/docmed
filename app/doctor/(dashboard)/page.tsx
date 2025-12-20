@@ -113,10 +113,12 @@ export default function DoctorDashboardPage() {
                         Aquí tienes un resumen de tu actividad reciente
                     </p>
                 </div>
-                <Button className="gap-2">
-                    <Plus className="w-4 h-4" />
-                    Nueva cita
-                </Button>
+                <Link href="/doctor/appointments">
+                    <Button className="gap-2 bg-doctoralia-teal hover:bg-[#059669]">
+                        <Plus className="w-4 h-4" />
+                        Añadir disponibilidad
+                    </Button>
+                </Link>
             </div>
 
             {/* Stats Grid */}

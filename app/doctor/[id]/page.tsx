@@ -17,15 +17,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/auth';
 import AuthModal from '@/components/AuthModal';
+import PaymentModal from '@/components/PaymentModal';
 import { getDoctorById } from '@/lib/doctor-auth';
+import { addAppointment, getVideoRoom } from '@/lib/doctor-data';
+import { Appointment } from '@/types';
+import { Calendar as CalendarUI } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default function DoctorProfilePage() {
     const params = useParams();
     const { user } = useAuth();
     const [doctor, setDoctor] = useState<Doctor | null>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const [selectedSlot, setSelectedSlot] = useState<{ date: string; time: string } | null>(null);
-    const [weekOffset, setWeekOffset] = useState(0);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [bookingSuccess, setBookingSuccess] = useState(false);
 
     useEffect(() => {
@@ -48,49 +55,50 @@ export default function DoctorProfilePage() {
         );
     }
 
-    const handleBooking = (date: string, time: string) => {
+    const handleBookingStart = () => {
+        if (!selectedDate || !selectedTime) return;
+
         if (!user) {
-            setSelectedSlot({ date, time });
             setShowAuthModal(true);
             return;
         }
-        // Proceed with booking
+        
+        setShowPaymentModal(true);
+    };
+
+    const handlePaymentSuccess = () => {
+        if (!selectedDate || !selectedTime || !user) return;
+
+        const dateStr = format(selectedDate, 'yyyy-MM-dd');
+        
+        const appointment: Appointment = {
+            id: `apt-${Date.now()}`,
+            doctorId: doctor.id,
+            patientId: user.id,
+            patientName: user.name,
+            dateTime: `${dateStr}T${selectedTime}:00`,
+            status: 'confirmed', // Confirmed after payment
+            mode: 'online',
+            reason: 'Consulta desde perfil',
+            location: doctor.address,
+            videoLink: getVideoRoom(doctor.id)
+        };
+
+        addAppointment(doctor.id, appointment);
+        setShowPaymentModal(false);
         setBookingSuccess(true);
+        setSelectedTime(null);
         setTimeout(() => setBookingSuccess(false), 5000);
     };
-
-    const handleAuthSuccess = () => {
-        if (selectedSlot) {
-            setBookingSuccess(true);
-            setSelectedSlot(null);
-            setTimeout(() => setBookingSuccess(false), 5000);
-        }
-    };
-
-    // Get next 7 days for display
-    const getDisplayDays = () => {
-        const days: { date: Date; dateStr: string; dayName: string; dayNum: number }[] = [];
-        const today = new Date();
-
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + i + (weekOffset * 7));
-            days.push({
-                date,
-                dateStr: date.toISOString().split('T')[0],
-                dayName: date.toLocaleDateString('es-ES', { weekday: 'short' }),
-                dayNum: date.getDate()
-            });
-        }
-        return days;
-    };
-
-    const displayDays = getDisplayDays();
 
     const getSlotCount = (dateStr: string) => {
         const day = doctor.availability.find(d => d.date === dateStr);
         return day?.slots.length || 0;
     };
+
+    const availableSlots = selectedDate 
+        ? doctor.availability.find(d => d.date === format(selectedDate, 'yyyy-MM-dd'))?.slots || []
+        : [];
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -259,97 +267,68 @@ export default function DoctorProfilePage() {
                                     <span className="text-primary font-bold">{doctor.priceRange}</span>
                                 </div>
                             </CardHeader>
-                            <CardContent>
-                                {/* Week Navigation */}
-                                <div className="flex items-center justify-between mb-4">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => setWeekOffset(Math.max(0, weekOffset - 1))}
-                                        disabled={weekOffset === 0}
-                                    >
-                                        <ChevronLeft className="w-4 h-4" />
-                                    </Button>
-                                    <span className="text-sm font-medium text-muted-foreground">
-                                        {displayDays[0].date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })} - {displayDays[6].date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => setWeekOffset(weekOffset + 1)}
-                                    >
-                                        <ChevronRight className="w-4 h-4" />
-                                    </Button>
-                                </div>
-
-                                {/* Day Selector */}
-                                <div className="grid grid-cols-7 gap-1 mb-4">
-                                    {displayDays.map((day, i) => {
-                                        const slotCount = getSlotCount(day.dateStr);
-                                        const isSelected = selectedSlot?.date === day.dateStr;
-                                        return (
-                                            <button
-                                                key={i}
-                                                onClick={() => slotCount > 0 && setSelectedSlot({ date: day.dateStr, time: '' })}
-                                                disabled={slotCount === 0}
-                                                className={`p-2 rounded-xl text-center transition ${isSelected
-                                                        ? 'bg-primary text-white'
-                                                        : slotCount > 0
-                                                            ? 'bg-primary/10 hover:bg-primary/20 text-gray-900'
-                                                            : 'bg-gray-50 text-gray-300'
-                                                    }`}
-                                            >
-                                                <div className="text-[10px] uppercase font-medium">{day.dayName}</div>
-                                                <div className="font-bold">{day.dayNum}</div>
-                                                {slotCount > 0 && (
-                                                    <div className={`text-[10px] ${isSelected ? 'text-white/80' : 'text-primary'}`}>
-                                                        {slotCount} citas
-                                                    </div>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
+                            <CardContent className="space-y-6">
+                                {/* Calendar UI Integration */}
+                                <div className="border rounded-2xl p-2 bg-gray-50/50">
+                                    <CalendarUI
+                                        mode="single"
+                                        selected={selectedDate}
+                                        onSelect={setSelectedDate}
+                                        locale={es}
+                                        className="w-full"
+                                        disabled={(date) => {
+                                            const dateStr = format(date, 'yyyy-MM-dd');
+                                            return date < new Date(new Date().setHours(0, 0, 0, 0)) || getSlotCount(dateStr) === 0;
+                                        }}
+                                    />
                                 </div>
 
                                 {/* Time Slots */}
-                                {selectedSlot?.date && (
-                                    <div className="space-y-2">
-                                        <p className="text-sm font-medium text-muted-foreground">Horarios disponibles:</p>
+                                {selectedDate && (
+                                    <div className="space-y-3">
+                                        <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                            <Clock className="w-4 h-4 text-primary" />
+                                            Horarios para el {format(selectedDate, 'd \'de\' MMMM', { locale: es })}:
+                                        </p>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {doctor.availability
-                                                .find(d => d.date === selectedSlot.date)
-                                                ?.slots.map((time, i) => (
+                                            {availableSlots.length > 0 ? (
+                                                availableSlots.map((time, i) => (
                                                     <Button
                                                         key={i}
-                                                        variant={selectedSlot.time === time ? 'default' : 'outline'}
+                                                        variant={selectedTime === time ? 'default' : 'outline'}
                                                         size="sm"
-                                                        onClick={() => setSelectedSlot({ ...selectedSlot, time })}
+                                                        onClick={() => setSelectedTime(time)}
+                                                        className={selectedTime === time ? 'bg-primary text-white' : 'hover:border-primary hover:text-primary'}
                                                     >
                                                         {time}
                                                     </Button>
-                                                ))}
+                                                ))
+                                            ) : (
+                                                <p className="col-span-3 text-sm text-gray-400 italic text-center py-2">
+                                                    No hay huecos para este día
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Book Button */}
                                 <Button
-                                    className="w-full mt-6"
-                                    size="lg"
-                                    disabled={!selectedSlot?.time}
-                                    onClick={() => selectedSlot?.time && handleBooking(selectedSlot.date, selectedSlot.time)}
+                                    className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20"
+                                    disabled={!selectedTime}
+                                    onClick={handleBookingStart}
                                 >
-                                    {selectedSlot?.time
-                                        ? `Reservar para ${selectedSlot.time}`
+                                    {selectedTime
+                                        ? `Reservar para las ${selectedTime}`
                                         : 'Selecciona fecha y hora'}
                                 </Button>
 
-                                <div className="flex gap-2 mt-4">
-                                    <Button variant="outline" className="flex-1 gap-2">
+                                <div className="flex gap-2">
+                                    <Button variant="outline" className="flex-1 gap-2 rounded-xl">
                                         <Phone className="w-4 h-4" />
                                         Llamar
                                     </Button>
-                                    <Button variant="outline" className="flex-1 gap-2">
+                                    <Button variant="outline" className="flex-1 gap-2 rounded-xl">
                                         <MessageSquare className="w-4 h-4" />
                                         Mensaje
                                     </Button>
@@ -363,7 +342,18 @@ export default function DoctorProfilePage() {
             <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
-                onSuccess={handleAuthSuccess}
+                onSuccess={() => {
+                    setShowAuthModal(false);
+                    setShowPaymentModal(true);
+                }}
+            />
+
+            <PaymentModal 
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)}
+                onSuccess={handlePaymentSuccess}
+                amount={doctor.priceRange}
+                doctorName={doctor.name}
             />
         </div>
     );

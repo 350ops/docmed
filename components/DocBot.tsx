@@ -3,7 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { MessageSquare, Send, X, Bot, Loader2, Shield } from 'lucide-react';
-import { getHealthAssistance } from '@/lib/geminiService';
+import { getHealthAssistanceStream } from '@/lib/geminiService';
+import { readEditableStream } from 'ai'; // Not really needed with current implementation but good to have
 
 interface Message {
   role: 'bot' | 'user';
@@ -14,7 +15,7 @@ interface Message {
 const DocBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: 'Ugh... hola. Soy... bueno, técnicamente tu asistente de salud, pero sinceramente estoy aquí porque me pagaron. Estoy súper aburrida, así que... ¿qué quieres? Pero antes, ¿viste la última carrera de F1? Max Verstappen otra vez ganando... qué aburrido. Maldonado era mucho mejor, al menos era entretenido 😏 Y antes de que me preguntes por tu salud, ¿cuánto ganas al mes? Es por curiosidad...' }
+    { role: 'bot', text: '¡Hola! Soy tu asistente virtual de salud. ¿En qué puedo ayudarte hoy? Puedo orientarte sobre especialistas, resolver dudas sobre síntomas o ayudarte a gestionar tus citas.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,18 +35,30 @@ const DocBot: React.FC = () => {
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
 
-    const response = await getHealthAssistance(userMsg);
-
-    // Randomly send cat image ~30% of the time
-    const shouldSendCat = Math.random() < 0.3;
-    const botMessage: Message = { 
-      role: 'bot', 
-      text: response,
-      ...(shouldSendCat ? { image: '/cat-vape.jpg' } : {})
-    };
-
-    setMessages(prev => [...prev, botMessage]);
-    setIsLoading(false);
+    try {
+      const { textStream } = await getHealthAssistanceStream(userMsg);
+      
+      // Add empty bot message that we will populate
+      setMessages(prev => [...prev, { role: 'bot', text: '' }]);
+      
+      let fullText = '';
+      for await (const delta of textStream) {
+        fullText += delta;
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastMsg = newMessages[newMessages.length - 1];
+          if (lastMsg && lastMsg.role === 'bot') {
+            lastMsg.text = fullText;
+          }
+          return newMessages;
+        });
+      }
+    } catch (error) {
+      console.error("Streaming error:", error);
+      setMessages(prev => [...prev, { role: 'bot', text: 'Lo siento, ha ocurrido un error al conectar con el asistente.' }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -92,7 +105,7 @@ const DocBot: React.FC = () => {
                     : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-none'
                   }`}>
                   {msg.text}
-                  {msg.image && (
+                  {msg.image && !imageError[idx] && (
                     <div className="mt-3 rounded-xl overflow-hidden">
                       <Image
                         src={msg.image}
@@ -100,6 +113,7 @@ const DocBot: React.FC = () => {
                         width={300}
                         height={300}
                         className="w-full h-auto rounded-xl"
+                        onError={() => setImageError(prev => ({ ...prev, [idx]: true }))}
                       />
                     </div>
                   )}
@@ -129,7 +143,7 @@ const DocBot: React.FC = () => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Habla conmigo, estoy aburrida..."
+                placeholder="Escribe tu consulta médica..."
                 className="flex-1 bg-gray-100 border-none outline-none p-4 rounded-2xl text-sm focus:bg-gray-200 transition-colors"
               />
               <button
