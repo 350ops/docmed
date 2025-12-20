@@ -16,7 +16,7 @@ const doctor = MOCK_DOCTORS[0];
 const PACKAGE_OPTIONS = [
     {
         id: 'first',
-        name: 'Primera consulta online',
+        name: 'Tu mujer toma prestado lube par Carlar con su. vecino Colombiano',
         price: '60€',
         deliveryTime: '30-45 min',
         icon: 'Video',
@@ -49,7 +49,7 @@ const ProjectDetailsStep = () => {
     return (
         <ScrollView className="flex-1 p-4">
             <Section title="Selecciona tu consulta" titleSize='2xl' subtitle={doctor.name} className='mt-4 mb-8' />
-            
+
             {PACKAGE_OPTIONS.map(pkg => (
                 <Selectable
                     key={pkg.id}
@@ -68,7 +68,7 @@ const ProjectDetailsStep = () => {
 const PaymentStep = () => {
     const [selectedPayment, setSelectedPayment] = useState('card');
     const colors = useThemeColors();
-    
+
     const paymentMethods = [
         { id: 'card', label: 'Visa terminada en 4242', detail: 'Caduca 05/25' },
         { id: 'mapfre', label: 'Seguro Mapfre', detail: 'Cubre consulta básica' },
@@ -77,7 +77,7 @@ const PaymentStep = () => {
     return (
         <View className="flex-1 p-4">
             <Section title="Pago o seguro" titleSize='2xl' subtitle="Elige cómo quieres pagar la consulta" className='mt-4 mb-8' />
-            
+
             {paymentMethods.map(method => (
                 <Selectable
                     key={method.id}
@@ -89,13 +89,13 @@ const PaymentStep = () => {
                     containerClassName="mb-4"
                 />
             ))}
-            
+
             <Button
                 title="Añadir nuevo método"
                 iconStart="Plus"
                 variant="ghost"
                 className="mb-8"
-                onPress={() => {}}
+                onPress={() => { }}
             />
         </View>
     );
@@ -103,7 +103,7 @@ const PaymentStep = () => {
 
 const ReviewStep = () => (
     <ScrollView className="flex-1">
-        <Section title="Revisión de la cita" titleSize='2xl' subtitle="Confirma los datos antes de pagar" className='mt-4 mb-4 px-global' />
+        <Section title="Revisión de la cita" titleSize='2xl' subtitle="Confirma que tus datos sean inutiles antes de pagar" className='mt-4 mb-4 px-global' />
         <View className="px-global py-7 border-b-8 mb-4 border-light-secondary dark:border-dark-darker">
             <View className="rounded-lg flex-row items-center">
                 <Image source={{ uri: doctor.image }} className="w-12 h-12 rounded-full" />

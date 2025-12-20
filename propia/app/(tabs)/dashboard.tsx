@@ -21,8 +21,8 @@ const todaysAppointments = [
         time: '09:00',
         duration: '30 min',
         mode: 'online',
-        type: 'Primera consulta',
-        reason: 'Ansiedad y estrés laboral',
+        type: 'Primera experiencia',
+        reason: 'Macabredad y estrés porno',
         insurance: 'Sanitas',
         avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
         status: 'next' // next, upcoming, completed
@@ -33,8 +33,8 @@ const todaysAppointments = [
         time: '10:00',
         duration: '45 min',
         mode: 'presencial',
-        type: 'Seguimiento',
-        reason: 'Control dermatitis',
+        type: 'Segunda experiencia',
+        reason: 'Macabredad y estrés porno',
         insurance: 'Mapfre',
         avatar: 'https://randomuser.me/api/portraits/men/41.jpg',
         status: 'upcoming'
@@ -45,8 +45,8 @@ const todaysAppointments = [
         time: '11:30',
         duration: '30 min',
         mode: 'online',
-        type: 'Seguimiento',
-        reason: 'Revisión tratamiento',
+        type: 'Tercera experiencia',
+        reason: 'Macabredad y estrés porno',
         insurance: 'Adeslas',
         avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
         status: 'upcoming'
@@ -57,8 +57,8 @@ const todaysAppointments = [
         time: '12:30',
         duration: '30 min',
         mode: 'presencial',
-        type: 'Primera consulta',
-        reason: 'Consulta general',
+        type: ' Cuarta experiencia',
+        reason: 'Macabredad y estrés porno',
         insurance: 'DKV',
         avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
         status: 'upcoming'
@@ -268,8 +268,8 @@ const AppointmentRow = ({ appointment }: { appointment: typeof todaysAppointment
 const TaskRow = ({ task }: { task: typeof pendingTasks[number] }) => (
     <Pressable className="flex-row items-center py-3 border-b border-light-secondary dark:border-dark-secondary">
         <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${task.priority === 'high' ? 'bg-red-100 dark:bg-red-900' :
-                task.priority === 'medium' ? 'bg-amber-100 dark:bg-amber-900' :
-                    'bg-gray-100 dark:bg-gray-800'
+            task.priority === 'medium' ? 'bg-amber-100 dark:bg-amber-900' :
+                'bg-gray-100 dark:bg-gray-800'
             }`}>
             <Icon
                 name={task.icon as any}
