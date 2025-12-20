@@ -17,102 +17,106 @@ interface ChatUser {
   lastMessage: string;
   timestamp: string;
   unread: boolean;
-  propertyImage?: string;
-  destination?: string;
-  dates?: string;
-  type: 'host' | 'guest' | 'support';
+  doctorImage?: string;
+  specialty?: string;
+  consultationDate?: string;
+  type: 'doctor' | 'patient' | 'support';
 }
 
 // Mock data for demonstration
 const mockChats: ChatUser[] = [
   {
     id: '1',
-    name: 'Sarah (Host)',
+    name: 'Dra. María García',
     avatar: 'https://i.pravatar.cc/150?img=1',
-    lastMessage: 'Welcome to Barcelona! Check-in is at 3 PM. Let me know if you need anything.',
-    timestamp: '2m ago',
+    lastMessage: 'Hola, he revisado tus análisis y todo está en orden. Te envío las indicaciones.',
+    timestamp: '2m',
     unread: true,
-    propertyImage: 'https://images.pexels.com/photos/1571453/pexels-photo-1571453.jpeg?auto=compress&cs=tinysrgb&w=400',
-    destination: 'Barcelona, Spain',
-    dates: 'Dec 15-22',
-    type: 'host',
+    doctorImage: 'https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Medicina General',
+    consultationDate: 'Consulta: 20 Dic',
+    type: 'doctor',
   },
   {
     id: '2',
-    name: 'Michael (Host)',
+    name: 'Dr. Carlos Ruiz',
     avatar: 'https://i.pravatar.cc/150?img=2',
-    lastMessage: 'Thanks for staying! Hope you enjoyed your time in Paris.',
-    timestamp: '1h ago',
+    lastMessage: 'Recuerda tomar la medicación según las indicaciones. ¿Cómo te encuentras hoy?',
+    timestamp: '1h',
     unread: false,
-    propertyImage: 'https://images.pexels.com/photos/1571457/pexels-photo-1571457.jpeg?auto=compress&cs=tinysrgb&w=400',
-    destination: 'Paris, France',
-    dates: 'Nov 8-15',
-    type: 'host',
+    doctorImage: 'https://images.pexels.com/photos/4173239/pexels-photo-4173239.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Cardiología',
+    consultationDate: 'Consulta: 18 Dic',
+    type: 'doctor',
   },
   {
     id: '3',
-    name: 'Emma (Guest)',
+    name: 'Dra. Ana Martínez',
     avatar: 'https://i.pravatar.cc/150?img=3',
-    lastMessage: 'Hi! I\'ll be arriving around 6 PM. Is that okay for check-in?',
-    timestamp: '3h ago',
+    lastMessage: 'Tu próxima cita está confirmada. ¿Tienes alguna pregunta antes de la consulta?',
+    timestamp: '3h',
     unread: true,
-    destination: 'Your place in NYC',
-    dates: 'Dec 20-27',
-    type: 'guest',
+    doctorImage: 'https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Dermatología',
+    consultationDate: 'Consulta: 22 Dic',
+    type: 'doctor',
   },
   {
     id: '4',
-    name: 'David (Host)',
+    name: 'Dr. Pedro Sánchez',
     avatar: 'https://i.pravatar.cc/150?img=4',
-    lastMessage: 'The WiFi password is "welcome123". Enjoy your stay!',
-    timestamp: '5h ago',
+    lastMessage: 'Los resultados de la ecografía son normales. Puedes descargar el informe en la app.',
+    timestamp: '5h',
     unread: false,
-    propertyImage: 'https://images.pexels.com/photos/1571467/pexels-photo-1571467.jpeg?auto=compress&cs=tinysrgb&w=400',
-    destination: 'London, UK',
-    dates: 'Oct 12-19',
-    type: 'host',
+    doctorImage: 'https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Ginecología',
+    consultationDate: 'Consulta: 15 Dic',
+    type: 'doctor',
   },
   {
     id: '5',
-    name: 'Airbnb Support',
+    name: 'CareSalud Soporte',
     avatar: 'https://i.pravatar.cc/150?img=5',
-    lastMessage: 'We\'ve processed your refund. It should appear in 3-5 business days.',
-    timestamp: 'Yesterday',
+    lastMessage: 'Tu reembolso ha sido procesado. Aparecerá en tu cuenta en 3-5 días hábiles.',
+    timestamp: 'Ayer',
     unread: false,
     type: 'support',
   },
   {
     id: '6',
-    name: 'Lisa (Host)',
+    name: 'Dra. Laura Fernández',
     avatar: 'https://i.pravatar.cc/150?img=6',
-    lastMessage: 'The apartment is ready for your arrival. See you soon!',
-    timestamp: '2 days ago',
+    lastMessage: 'He recibido tus síntomas. Te recomiendo agendar una cita presencial.',
+    timestamp: '2 días',
     unread: true,
-    propertyImage: 'https://images.pexels.com/photos/1571472/pexels-photo-1571472.jpeg?auto=compress&cs=tinysrgb&w=400',
-    destination: 'Rome, Italy',
-    dates: 'Jan 5-12',
-    type: 'host',
+    doctorImage: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Psicología',
+    consultationDate: 'Consulta: 23 Dic',
+    type: 'doctor',
   },
   {
     id: '7',
-    name: 'Airbnb Support',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    lastMessage: 'We\'ve processed your refund. It should appear in 3-5 business days.',
-    timestamp: 'Yesterday',
+    name: 'Dr. Miguel Torres',
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    lastMessage: 'Tu tratamiento va progresando bien. Nos vemos en la próxima revisión.',
+    timestamp: '3 días',
     unread: false,
-    type: 'support',
+    doctorImage: 'https://images.pexels.com/photos/4225880/pexels-photo-4225880.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Traumatología',
+    consultationDate: 'Consulta: 10 Dic',
+    type: 'doctor',
   },
   {
     id: '8',
-    name: 'Lisa (Host)',
-    avatar: 'https://i.pravatar.cc/150?img=6',
-    lastMessage: 'The apartment is ready for your arrival. See you soon!',
-    timestamp: '2 days ago',
-    unread: true,
-    propertyImage: 'https://images.pexels.com/photos/1571472/pexels-photo-1571472.jpeg?auto=compress&cs=tinysrgb&w=400',
-    destination: 'Rome, Italy',
-    dates: 'Jan 5-12',
-    type: 'host',
+    name: 'Dra. Isabel López',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    lastMessage: 'Los análisis de tu hijo están perfectos. No te preocupes.',
+    timestamp: '4 días',
+    unread: false,
+    doctorImage: 'https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=400',
+    specialty: 'Pediatría',
+    consultationDate: 'Consulta: 8 Dic',
+    type: 'doctor',
   },
 ];
 
@@ -136,12 +140,12 @@ export default function ChatListScreen() {
   const renderChatItem = ({ item }: { item: ChatUser }) => (
     <Link href={`/screens/chat/${item.id}`} asChild>
       <TouchableOpacity activeOpacity={0.8} className="flex-row p-4 border-b border-light-secondary dark:border-dark-secondary">
-        {/* Property Image or Avatar */}
+        {/* Doctor Image or Avatar */}
         <View className="relative">
-          {item.propertyImage ? (
+          {item.doctorImage ? (
             <View className="relative">
-              <Image 
-                source={{ uri: item.propertyImage }} 
+              <Image
+                source={{ uri: item.doctorImage }}
                 className="w-16 h-16 rounded-xl"
               />
               <View className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full border-2 border-white dark:border-dark-primary">
@@ -178,16 +182,16 @@ export default function ChatListScreen() {
             {item.lastMessage}
           </ThemedText>
 
-          {/* Destination and Dates */}
-          {item.destination && (
+          {/* Specialty and Consultation Date */}
+          {item.specialty && (
             <View className="flex-row items-center justify-start">
               <ThemedText className="text-xs text-light-subtext dark:text-dark-subtext" numberOfLines={1}>
-                {item.destination}
+                {item.specialty}
               </ThemedText>
-              <View className='w-px h-px rounded-full bg-light-subtext dark:bg-dark-subtext mx-1' />
-              {item.dates && (
+              <View className='w-1 h-1 rounded-full bg-light-subtext dark:bg-dark-subtext mx-2' />
+              {item.consultationDate && (
                 <ThemedText className="text-xs text-light-subtext dark:text-dark-subtext">
-                  {item.dates}
+                  {item.consultationDate}
                 </ThemedText>
               )}
             </View>
