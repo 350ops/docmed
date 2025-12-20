@@ -41,7 +41,7 @@ const DocBot: React.FC = () => {
     const botMessage: Message = { 
       role: 'bot', 
       text: response,
-      ...(shouldSendCat && { image: '/cat-vape.jpg' })
+      ...(shouldSendCat ? { image: '/cat-vape.jpg' } : {})
     };
 
     setMessages(prev => [...prev, botMessage]);
