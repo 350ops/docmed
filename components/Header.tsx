@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Menu, Search, ChevronDown, LogOut, X, Stethoscope } from 'lucide-react';
+import Image from 'next/image';
+import { User, Menu, Search, ChevronDown, LogOut, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import AuthModal from './AuthModal';
 
@@ -12,43 +13,51 @@ const Header: React.FC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+    // Set initial scroll state
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <>
-      <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-lg shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
+      <header className={`sticky top-0 z-50 transition-all duration-300 ${mounted && scrolled ? 'bg-white/95 backdrop-blur-lg shadow-md border-b border-gray-100' : 'bg-[#0C6749] backdrop-blur-sm shadow-md border-b border-gray-100/80'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-18 py-4">
             <div className="flex items-center gap-10">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-11 h-11 bg-doctoralia-teal rounded-xl flex items-center justify-center shadow-lg shadow-teal-200 group-hover:scale-105 transition-transform">
-                  <Stethoscope className="text-white w-6 h-6" />
+                <div className="relative w-40 h-20 group-hover:scale-105 transition-transform">
+                  <Image 
+                    src="/logo.png" 
+                    alt="care salud" 
+                    width={160} 
+                    height={80} 
+                    className="object-contain"
+                    priority
+                  />
                 </div>
-                <span className="text-2xl font-black text-gray-900 tracking-tight">
-                  doctor<span className="text-doctoralia-teal">connect</span>
-                </span>
               </Link>
 
               <nav className="hidden lg:flex items-center space-x-8">
-                <Link href="/especialidades" className="text-gray-600 hover:text-doctoralia-teal font-medium transition relative group">
+                <Link href="/especialidades" className={`${mounted && scrolled ? 'text-gray-600 hover:text-doctoralia-teal' : 'text-white hover:text-emerald-200'} font-bold transition relative group`}>
                   Especialidades
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-doctoralia-teal transition-all group-hover:w-full" />
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${mounted && scrolled ? 'bg-doctoralia-teal' : 'bg-white'} transition-all group-hover:w-full`} />
                 </Link>
-                <Link href="/enfermedades" className="text-gray-600 hover:text-doctoralia-teal font-medium transition relative group">
+                <Link href="/enfermedades" className={`${mounted && scrolled ? 'text-gray-600 hover:text-doctoralia-teal' : 'text-white hover:text-emerald-200'} font-bold transition relative group`}>
                   Enfermedades
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-doctoralia-teal transition-all group-hover:w-full" />
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${mounted && scrolled ? 'bg-doctoralia-teal' : 'bg-white'} transition-all group-hover:w-full`} />
                 </Link>
-                <button className="text-gray-600 hover:text-doctoralia-teal font-medium flex items-center gap-1 transition relative group">
-                  Seguros <ChevronDown className="w-4 h-4" />
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-doctoralia-teal transition-all group-hover:w-full" />
-                </button>
+                <Link href="/seguros" className={`${mounted && scrolled ? 'text-gray-600 hover:text-doctoralia-teal' : 'text-white hover:text-emerald-200'} font-bold flex items-center gap-1 transition relative group`}>
+                  Seguros <ChevronDown className={`w-4 h-4 ${mounted && scrolled ? 'text-gray-600' : 'text-white'}`} />
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${mounted && scrolled ? 'bg-doctoralia-teal' : 'bg-white'} transition-all group-hover:w-full`} />
+                </Link>
               </nav>
             </div>
 
@@ -61,13 +70,13 @@ const Header: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 text-gray-700 font-medium hover:text-doctoralia-teal transition bg-gray-50 px-3 py-2 rounded-xl border border-gray-100"
+                    className={`flex items-center gap-2 ${mounted && scrolled ? 'text-gray-700 bg-gray-50 hover:text-doctoralia-teal border-gray-100' : 'text-white bg-white/20 hover:bg-white/30 border-white/30'} font-bold transition px-3 py-2 rounded-xl border backdrop-blur-sm`}
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-doctoralia-teal to-teal-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
+                    <div className="w-8 h-8 bg-gradient-to-br from-doctoralia-teal to-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="hidden sm:inline">{user.name.split(' ')[0]}</span>
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className={`w-4 h-4 ${mounted && scrolled ? 'text-gray-700' : 'text-white'}`} />
                   </button>
 
                   {showUserMenu && (
@@ -100,18 +109,18 @@ const Header: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="flex items-center gap-2 text-gray-700 font-medium hover:text-doctoralia-teal transition bg-white px-4 py-2.5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md"
+                  className={`flex items-center gap-2 ${mounted && scrolled ? 'text-gray-700 bg-white hover:text-doctoralia-teal border-gray-200' : 'text-white bg-white/20 hover:bg-white/30 border-white/30'} font-bold transition px-4 py-2.5 rounded-xl border backdrop-blur-sm shadow-sm hover:shadow-md`}
                 >
-                  <User className="w-5 h-5" />
+                  <User className={`w-5 h-5 ${mounted && scrolled ? 'text-gray-700' : 'text-white'}`} />
                   <span className="hidden sm:inline">Iniciar sesión</span>
                 </button>
               )}
 
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition"
+                className={`lg:hidden p-2 ${mounted && scrolled ? 'text-gray-500 hover:bg-gray-100' : 'text-white hover:bg-white/20'} rounded-xl transition`}
               >
-                {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {showMobileMenu ? <X className={`w-6 h-6 ${mounted && scrolled ? 'text-gray-500' : 'text-white'}`} /> : <Menu className={`w-6 h-6 ${mounted && scrolled ? 'text-gray-500' : 'text-white'}`} />}
               </button>
             </div>
           </div>

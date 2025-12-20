@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { MOCK_DOCTORS } from '@/lib/constants';
 import { Doctor, DayAvailability } from '@/types';
 import Header from '@/components/Header';
 import {
@@ -17,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/auth';
 import AuthModal from '@/components/AuthModal';
+import { getDoctorById } from '@/lib/doctor-auth';
 
 export default function DoctorProfilePage() {
     const params = useParams();
@@ -28,7 +28,8 @@ export default function DoctorProfilePage() {
     const [bookingSuccess, setBookingSuccess] = useState(false);
 
     useEffect(() => {
-        const found = MOCK_DOCTORS.find(d => d.id === params.id);
+        const doctorId = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
+        const found = getDoctorById(doctorId);
         setDoctor(found || null);
     }, [params.id]);
 

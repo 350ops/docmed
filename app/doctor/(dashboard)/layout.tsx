@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getCurrentDoctor, logout } from "@/lib/doctor-auth";
 import { Doctor } from "@/types";
 import DoctorSidebar from "@/components/DoctorSidebar";
-import { Search, LogOut, Bell, Menu, X } from "lucide-react";
+import { LogOut, Bell, Menu, X } from "lucide-react";
 
 export default function DoctorDashboardLayout({
     children,
@@ -37,8 +38,14 @@ export default function DoctorDashboardLayout({
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-12 h-12 bg-doctoralia-teal rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-                        <Search className="text-white w-7 h-7" />
+                    <div className="relative w-24 h-12 mx-auto mb-4 animate-pulse">
+                        <Image 
+                            src="/logo.png" 
+                            alt="care salud" 
+                            width={96} 
+                            height={48} 
+                            className="object-contain"
+                        />
                     </div>
                     <p className="text-gray-500">Cargando...</p>
                 </div>
@@ -89,12 +96,15 @@ export default function DoctorDashboardLayout({
                                 <Menu className="w-5 h-5" />
                             </button>
                             <Link href="/" className="flex items-center gap-2">
-                                <div className="w-9 h-9 bg-doctoralia-teal rounded-lg flex items-center justify-center">
-                                    <Search className="text-white w-5 h-5" />
+                                <div className="relative w-24 h-12">
+                                    <Image 
+                                        src="/logo.png" 
+                                        alt="care salud" 
+                                        width={96} 
+                                        height={48} 
+                                        className="object-contain"
+                                    />
                                 </div>
-                                <span className="text-xl font-bold text-gray-900 hidden sm:inline">
-                                    doctor<span className="text-doctoralia-teal">connect</span>
-                                </span>
                             </Link>
                         </div>
 

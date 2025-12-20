@@ -1,30 +1,65 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentDoctor } from "@/lib/doctor-auth";
-import { Doctor } from "@/types";
-import { Calendar as CalendarIcon, Star, Eye, TrendingUp, Users, Clock, Plus, ChevronRight } from "lucide-react";
+import { Appointment, Doctor } from "@/types";
+import {
+    Calendar as CalendarIcon,
+    Star,
+    Clock,
+    Plus,
+    ChevronRight,
+    Copy,
+    Video,
+    BookOpen,
+} from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { getAppointments, getJournalPreferences, getVideoRoom } from "@/lib/doctor-data";
 
 export default function DoctorDashboardPage() {
     const [doctor, setDoctor] = useState<Doctor | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [journals, setJournals] = useState<string[]>([]);
+    const [assistantPrompt, setAssistantPrompt] = useState<string>("");
+    const [copiedPrompt, setCopiedPrompt] = useState(false);
+    const [videoRoom, setVideoRoom] = useState<string>("");
 
     useEffect(() => {
         const current = getCurrentDoctor();
+        if (!current) return;
         setDoctor(current);
+        setAppointments(getAppointments(current.id));
+        const subscribed = getJournalPreferences(current.id);
+        setJournals(subscribed);
+        setVideoRoom(getVideoRoom(current.id));
     }, []);
 
+    useEffect(() => {
+        if (doctor) {
+            setAssistantPrompt(buildAssistantPrompt(doctor, journals, videoRoom));
+        }
+    }, [doctor, journals, videoRoom]);
+
     if (!doctor) return null;
+
+    const confirmed = useMemo(
+        () => appointments.filter((apt) => apt.status === "confirmed").length,
+        [appointments]
+    );
+    const onlineCount = useMemo(
+        () => appointments.filter((apt) => apt.mode === "online").length,
+        [appointments]
+    );
 
     const stats = [
         {
             label: "Citas este mes",
-            value: "24",
-            change: "+12%",
+            value: appointments.length.toString(),
+            change: confirmed === appointments.length ? "100% confirmadas" : `${confirmed}/${appointments.length} confirmadas`,
             icon: CalendarIcon,
             color: "bg-primary",
         },
@@ -36,35 +71,34 @@ export default function DoctorDashboardPage() {
             color: "bg-yellow-500",
         },
         {
-            label: "Visitas al perfil",
-            value: "1,234",
-            change: "+8%",
-            icon: Eye,
+            label: "Consultas online",
+            value: onlineCount.toString(),
+            change: videoRoom ? "Sala protegida activa" : "Configura tu sala",
+            icon: Video,
             color: "bg-purple-500",
         },
         {
-            label: "Nuevos pacientes",
-            value: "18",
-            change: "+5%",
-            icon: Users,
+            label: "Journals suscritos",
+            value: journals.length.toString(),
+            change: journals.join(", "),
+            icon: BookOpen,
             color: "bg-green-500",
         },
     ];
 
-    const upcomingAppointments = [
-        { patient: "María García", time: "10:00", type: "Consulta general", status: "confirmed" },
-        { patient: "Carlos López", time: "11:30", type: "Seguimiento", status: "confirmed" },
-        { patient: "Ana Fernández", time: "12:00", type: "Primera visita", status: "pending" },
-        { patient: "Pedro Martínez", time: "16:00", type: "Revisión", status: "confirmed" },
-    ];
+    const appointmentsForDay = useMemo(() => {
+        if (!selectedDate) return appointments;
+        const target = selectedDate.toDateString();
+        return appointments.filter(
+            (apt) => new Date(apt.dateTime).toDateString() === target
+        );
+    }, [appointments, selectedDate]);
 
     // Mock dates with appointments
-    const appointmentDates = [
-        new Date(),
-        new Date(Date.now() + 86400000),
-        new Date(Date.now() + 86400000 * 2),
-        new Date(Date.now() + 86400000 * 5),
-    ];
+    const appointmentDates = useMemo(
+        () => appointments.map((apt) => new Date(apt.dateTime)),
+        [appointments]
+    );
 
     return (
         <div className="max-w-7xl mx-auto space-y-8">
@@ -165,37 +199,45 @@ export default function DoctorDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
-                            {upcomingAppointments.map((apt, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition group cursor-pointer"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition">
-                                            <Clock className="w-5 h-5 text-primary" />
+                            {appointmentsForDay.map((apt) => {
+                                const dateObj = new Date(apt.dateTime);
+                                return (
+                                    <div
+                                        key={apt.id}
+                                        className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition group cursor-pointer"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition">
+                                                <Clock className="w-5 h-5 text-primary" />
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-gray-900">{apt.patientName}</p>
+                                                <p className="text-sm text-muted-foreground">{apt.reason || "Consulta"}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-900">{apt.patient}</p>
-                                            <p className="text-sm text-muted-foreground">{apt.type}</p>
+                                        <div className="text-right flex items-center gap-3">
+                                            <div>
+                                                <p className="font-bold text-gray-900">
+                                                    {dateObj.toLocaleTimeString("es-ES", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </p>
+                                                <Badge
+                                                    variant={apt.status === 'confirmed' ? 'default' : 'secondary'}
+                                                    className={apt.status === 'confirmed' ? 'bg-green-500' : 'bg-yellow-500'}
+                                                >
+                                                    {apt.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
+                                                </Badge>
+                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition" />
                                         </div>
                                     </div>
-                                    <div className="text-right flex items-center gap-3">
-                                        <div>
-                                            <p className="font-bold text-gray-900">{apt.time}</p>
-                                            <Badge
-                                                variant={apt.status === 'confirmed' ? 'default' : 'secondary'}
-                                                className={apt.status === 'confirmed' ? 'bg-green-500' : 'bg-yellow-500'}
-                                            >
-                                                {apt.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
-                                            </Badge>
-                                        </div>
-                                        <ChevronRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition" />
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
-                        {upcomingAppointments.length === 0 && (
+                        {appointmentsForDay.length === 0 && (
                             <div className="text-center py-12">
                                 <CalendarIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
                                 <p className="text-muted-foreground">No hay citas programadas para este día</p>
@@ -246,7 +288,7 @@ export default function DoctorDashboardPage() {
                         </a>
 
                         <a
-                            href="#"
+                            href="/doctor/profile?tab=reviews"
                             className="p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition text-center group"
                         >
                             <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
@@ -285,6 +327,54 @@ export default function DoctorDashboardPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* AI Assistant Prompt */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Asistente IA por especialidad</CardTitle>
+                    <CardDescription>
+                        Prompt listo para tu asistente clínico personalizado. Úsalo con Gemini u
+                        otra LLM configurada en tu panel.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <div className="relative">
+                        <textarea
+                            value={assistantPrompt}
+                            readOnly
+                            className="w-full min-h-[180px] bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-800"
+                        />
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            className="absolute top-3 right-3 gap-2"
+                            onClick={async () => {
+                                await navigator.clipboard.writeText(assistantPrompt);
+                                setCopiedPrompt(true);
+                                setTimeout(() => setCopiedPrompt(false), 2000);
+                            }}
+                        >
+                            <Copy className="w-4 h-4" />
+                            {copiedPrompt ? "Copiado" : "Copiar"}
+                        </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                        <Badge variant="secondary">Rol: especialista {doctor.specialty}</Badge>
+                        <Badge variant="secondary">Journals: {journals.join(", ") || "Añade más"}</Badge>
+                        <Badge variant="secondary">Sala vídeo: {videoRoom}</Badge>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
+}
+
+function buildAssistantPrompt(doctor: Doctor, journals: string[], videoRoom: string) {
+    return `Eres un asistente clínico exclusivo para ${doctor.name} (${doctor.specialty}). Responde en español con tono profesional y conciso. 
+- Prioriza seguridad del paciente, triage y pasos claros; nunca diagnostiques sin evidencia ni ignores alarmas rojas.
+- Contexto del especialista: ubicación ${doctor.city}, experiencia ${doctor.experience ?? "N/A"} años, idiomas ${doctor.languages?.join(", ") ?? "Español"}, dirección ${doctor.address}.
+- Usa información de los journals de referencia: ${journals.join(", ") || "añadir revistas"} para citar guías actuales.
+- Agenda y videollamadas: propone horarios disponibles según slots publicados y ofrece el enlace de sala segura ${videoRoom || "configurar"} para consultas online.
+- Si falta información clínica, solicita datos concretos antes de sugerir plan.`.trim();
 }

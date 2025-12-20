@@ -2,6 +2,12 @@
 
 import { Doctor } from "@/types";
 import { MOCK_DOCTORS } from "./constants";
+import {
+    ensureDoctorRecord,
+    getDoctorProfiles,
+    getDoctorRecord,
+    updateDoctorProfile,
+} from "./doctor-data";
 
 // Mock doctor credentials (email derived from name)
 const MOCK_CREDENTIALS: Record<string, { password: string; doctorId: string }> = {
@@ -12,41 +18,24 @@ const MOCK_CREDENTIALS: Record<string, { password: string; doctorId: string }> =
 };
 
 const AUTH_KEY = "caresalud_auth";
-const DOCTORS_KEY = "caresalud_doctors";
-
-// Initialize doctors in localStorage if not present
-function initDoctors(): Doctor[] {
-    if (typeof window === "undefined") return MOCK_DOCTORS;
-
-    const stored = localStorage.getItem(DOCTORS_KEY);
-    if (!stored) {
-        localStorage.setItem(DOCTORS_KEY, JSON.stringify(MOCK_DOCTORS));
-        return MOCK_DOCTORS;
-    }
-    return JSON.parse(stored);
-}
 
 // Get all doctors (with any edits)
 export function getDoctors(): Doctor[] {
-    return initDoctors();
+    return getDoctorProfiles();
 }
 
 // Get a single doctor by ID
 export function getDoctorById(id: string): Doctor | undefined {
-    const doctors = getDoctors();
-    return doctors.find((d) => d.id === id);
+    const record = getDoctorRecord(id || "");
+    if (!record) return undefined;
+    return { ...record.profile, availability: record.availability };
 }
 
 // Update a doctor's profile
 export function updateDoctor(updatedDoctor: Doctor): Doctor {
     if (typeof window === "undefined") return updatedDoctor;
-
-    const doctors = getDoctors();
-    const index = doctors.findIndex((d) => d.id === updatedDoctor.id);
-    if (index !== -1) {
-        doctors[index] = updatedDoctor;
-        localStorage.setItem(DOCTORS_KEY, JSON.stringify(doctors));
-    }
+    ensureDoctorRecord(updatedDoctor);
+    updateDoctorProfile(updatedDoctor);
     return updatedDoctor;
 }
 
@@ -59,7 +48,7 @@ export function login(email: string, password: string): Doctor | null {
         return null;
     }
 
-    const doctor = getDoctorById(cred.doctorId);
+    const doctor = getDoctorById(cred.doctorId) || ensureDoctorRecord(MOCK_DOCTORS.find(d => d.id === cred.doctorId)!).profile;
     if (!doctor) return null;
 
     // Store auth session

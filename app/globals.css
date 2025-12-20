@@ -5,10 +5,10 @@
 @tailwind utilities;
 
 :root {
-  /* Primary brand colors */
-  --doctoralia-teal: #00c3a5;
-  --doctoralia-teal-dark: #00af94;
-  --doctoralia-teal-light: #e6f9f6;
+  /* Primary brand colors - vibrant green matching logo */
+  --doctoralia-teal: #10b981;
+  --doctoralia-teal-dark: #059669;
+  --doctoralia-teal-light: #d1fae5;
 
   /* Coral accent - Virtua inspired */
   --coral: #FF6B5B;
@@ -77,12 +77,12 @@ body {
 
 /* Shadow utilities */
 .shadow-teal-100 {
-  --tw-shadow-color: rgba(0, 195, 165, 0.1);
+  --tw-shadow-color: rgba(16, 185, 129, 0.1);
   --tw-shadow: var(--tw-shadow-colored);
 }
 
 .shadow-teal-200 {
-  --tw-shadow-color: rgba(0, 195, 165, 0.2);
+  --tw-shadow-color: rgba(16, 185, 129, 0.2);
   --tw-shadow: var(--tw-shadow-colored);
 }
 
@@ -96,7 +96,7 @@ body {
    ============================================ */
 
 .gradient-hero {
-  background: linear-gradient(135deg, #f0f9f8 0%, #e6f9f6 50%, #fff 100%);
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #fff 100%);
 }
 
 .gradient-hero-warm {
@@ -151,7 +151,7 @@ body {
 
 .blob-teal {
   position: absolute;
-  background: radial-gradient(circle, rgba(0, 195, 165, 0.15) 0%, rgba(0, 195, 165, 0) 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
   border-radius: 50%;
   filter: blur(40px);
   pointer-events: none;
@@ -357,23 +357,23 @@ body {
     --card-foreground: 220 15% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 15%;
-    /* Teal primary */
-    --primary: 166 100% 38%;
+    /* Vibrant green primary - matching logo */
+    --primary: 160 84% 39%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 166 30% 96%;
-    --secondary-foreground: 166 100% 28%;
+    --secondary: 152 30% 96%;
+    --secondary-foreground: 160 84% 30%;
     --muted: 220 10% 96%;
     --muted-foreground: 220 10% 45%;
-    /* Teal accent */
-    --accent: 166 40% 95%;
-    --accent-foreground: 166 100% 28%;
+    /* Vibrant green accent */
+    --accent: 152 40% 95%;
+    --accent-foreground: 160 84% 30%;
     /* Coral destructive */
     --destructive: 6 85% 62%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 10% 90%;
     --input: 220 10% 90%;
-    --ring: 166 100% 38%;
-    --chart-1: 166 100% 38%;
+    --ring: 160 84% 39%;
+    --chart-1: 160 84% 39%;
     --chart-2: 6 85% 62%;
     --chart-3: 217 33% 17%;
     --chart-4: 43 74% 66%;
@@ -388,7 +388,7 @@ body {
     --card-foreground: 0 0% 98%;
     --popover: 220 15% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 166 100% 45%;
+    --primary: 160 84% 45%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 15% 15%;
     --secondary-foreground: 0 0% 98%;
@@ -400,8 +400,8 @@ body {
     --destructive-foreground: 0 0% 98%;
     --border: 220 15% 18%;
     --input: 220 15% 18%;
-    --ring: 166 100% 45%;
-    --chart-1: 166 100% 45%;
+    --ring: 160 84% 45%;
+    --chart-1: 160 84% 45%;
     --chart-2: 6 85% 55%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;

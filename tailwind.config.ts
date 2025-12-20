@@ -9,7 +9,7 @@ export default {
     theme: {
     	extend: {
     		colors: {
-    			'doctoralia-teal': '#00c3a5',
+    			'doctoralia-teal': '#10b981',
     			background: 'hsl(var(--background))',
     			foreground: 'hsl(var(--foreground))',
     			card: {

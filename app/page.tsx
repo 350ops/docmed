@@ -9,7 +9,9 @@ import Filters from '@/components/Filters';
 import DocBot from '@/components/DocBot';
 import { MOCK_DOCTORS } from '@/lib/constants';
 import { getLocationFromIP } from '@/lib/geolocation';
-import { Doctor } from '@/types';
+import { Doctor, Appointment } from '@/types';
+import { getDoctors } from '@/lib/doctor-auth';
+import { addAppointment, getVideoRoom, setAvailability } from '@/lib/doctor-data';
 import { Search, Heart, Shield, Globe, CheckCircle, Calendar, Users, Award, ArrowRight, Sparkles, MapPin, List, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -36,8 +38,16 @@ export default function Home() {
     const [isLoadingLocation, setIsLoadingLocation] = useState(true);
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
-    // Get user location from IP on mount
+    // Load doctors from local storage / seed
     useEffect(() => {
+        const seededDoctors = getDoctors();
+        setDoctors(seededDoctors);
+        setFilteredDoctors(seededDoctors);
+    }, []);
+
+    // Get user location from IP once doctors are loaded
+    useEffect(() => {
+        if (!doctors.length) return;
         const fetchLocation = async () => {
             try {
                 const location = await getLocationFromIP();
@@ -46,7 +56,7 @@ export default function Home() {
                     console.log("Location detected from IP:", location.city);
 
                     // Filter doctors by detected city
-                    const cityDoctors = MOCK_DOCTORS.filter(doc =>
+                    const cityDoctors = doctors.filter(doc =>
                         doc.city.toLowerCase().includes(location.city.toLowerCase()) ||
                         doc.location.toLowerCase().includes(location.city.toLowerCase())
                     );
@@ -64,14 +74,15 @@ export default function Home() {
         };
 
         fetchLocation();
-    }, []);
+    }, [doctors]);
 
     const handleSearch = (specialty: string) => {
+        const sourceDoctors = doctors.length ? doctors : MOCK_DOCTORS;
         setIsSearching(true);
         setSearchQuery({ specialty });
 
         setTimeout(() => {
-            const results = MOCK_DOCTORS.filter(doc => {
+            const results = sourceDoctors.filter(doc => {
                 const matchesSpecialty = !specialty ||
                     doc.specialty.toLowerCase().includes(specialty.toLowerCase()) ||
                     doc.name.toLowerCase().includes(specialty.toLowerCase()) ||
@@ -87,7 +98,7 @@ export default function Home() {
                 return specialty ? matchesSpecialty : (matchesSpecialty && matchesLocation);
             });
 
-            setFilteredDoctors(results.length > 0 ? results : MOCK_DOCTORS);
+            setFilteredDoctors(results.length > 0 ? results : sourceDoctors);
             setIsSearching(false);
 
             const resultsElement = document.getElementById('results-section');
@@ -112,16 +123,56 @@ export default function Home() {
 
         setBookingSuccess(`¡Cita solicitada con ${doc.name} para el ${formatted}! Te hemos enviado un correo de confirmación.`);
 
+        // Persist in doctor agenda
+        const appointment: Appointment = {
+            id: `apt-${Date.now()}`,
+            doctorId,
+            patientName: "Paciente marketplace",
+            dateTime: slot,
+            status: 'pending',
+            mode: 'online',
+            reason: 'Reserva desde marketplace',
+            location: doc.address,
+            videoLink: getVideoRoom(doctorId)
+        };
+        addAppointment(doctorId, appointment);
+
+        // Remove booked slot locally to avoid duplications
+        const [dateStr, timeStr] = slot.split('T');
+        const cleanTime = timeStr.slice(0, 5);
+        const updatedDoctors = doctors.map(d => {
+            if (d.id !== doctorId) return d;
+            const updatedAvailability = d.availability.map(day =>
+                day.date === dateStr ? { ...day, slots: day.slots.filter(s => s !== cleanTime) } : day
+            );
+            return { ...d, availability: updatedAvailability };
+        });
+        setDoctors(updatedDoctors);
+        setFilteredDoctors(prev =>
+            prev.map(d => d.id === doctorId ? { ...d, availability: updatedDoctors.find(u => u.id === doctorId)?.availability || d.availability } : d)
+        );
+        setAvailability(doctorId, updatedDoctors.find(d => d.id === doctorId)?.availability || doc.availability);
+
         setTimeout(() => setBookingSuccess(null), 6000);
     };
 
-    const handleFilterChange = (filters: { specialty?: string }) => {
+    const handleFilterChange = (filters: { specialty?: string; insurance?: string; checked?: boolean }) => {
+        const sourceDoctors = doctors.length ? doctors : MOCK_DOCTORS;
+        let results = sourceDoctors;
+
         if (filters.specialty && filters.specialty !== 'all') {
-            const filtered = MOCK_DOCTORS.filter(d => d.specialty === filters.specialty);
-            setFilteredDoctors(filtered);
-        } else if (filters.specialty === 'all') {
-            setFilteredDoctors(MOCK_DOCTORS);
+            results = results.filter(d => d.specialty === filters.specialty);
         }
+
+        if (filters.insurance && filters.checked) {
+            results = results.filter(d => d.insurances.includes(filters.insurance!));
+        }
+
+        if (filters.specialty === 'all' && !filters.insurance) {
+            results = sourceDoctors;
+        }
+
+        setFilteredDoctors(results);
     };
 
     return (
@@ -144,7 +195,7 @@ export default function Home() {
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight tracking-tight">
                         Tu salud, nuestra <br className="hidden sm:block" />
-                        <span className="bg-gradient-to-r from-doctoralia-teal to-teal-500 bg-clip-text text-transparent">prioridad</span>
+                        <span className="bg-gradient-to-r from-doctoralia-teal to-emerald-500 bg-clip-text text-transparent">prioridad</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto font-light">
                         Más de <strong className="text-coral font-semibold">120.000</strong> profesionales de la salud listos para ayudarte.
@@ -448,13 +499,13 @@ export default function Home() {
                                 Reinventando la experiencia del paciente a través de la tecnología y la conexión humana. El marketplace de salud más grande de España.
                             </p>
                             <div className="flex gap-3">
-                                <a href="#" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
+                                <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z" /></svg>
                                 </a>
-                                <a href="#" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
+                                <a href="https://x.com" target="_blank" rel="noreferrer" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                                 </a>
-                                <a href="#" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
+                                <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-doctoralia-teal hover:text-white transition">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" /></svg>
                                 </a>
                             </div>
@@ -462,28 +513,28 @@ export default function Home() {
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Para pacientes</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Especialistas</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Centros médicos</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Servicios</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Enfermedades</a></li>
+                                <li><a href="/especialidades" className="hover:text-doctoralia-teal transition">Especialistas</a></li>
+                                <li><a href="/clinicas" className="hover:text-doctoralia-teal transition">Centros médicos</a></li>
+                                <li><a href="/seguros" className="hover:text-doctoralia-teal transition">Servicios</a></li>
+                                <li><a href="/enfermedades" className="hover:text-doctoralia-teal transition">Enfermedades</a></li>
                             </ul>
                         </div>
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Para médicos</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Suscripciones</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Agenda Online</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Consultas Online</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Recurso para centros</a></li>
+                                <li><a href="/doctor/settings" className="hover:text-doctoralia-teal transition">Suscripciones</a></li>
+                                <li><a href="/doctor/appointments" className="hover:text-doctoralia-teal transition">Agenda Online</a></li>
+                                <li><a href="/doctor/appointments" className="hover:text-doctoralia-teal transition">Consultas Online</a></li>
+                                <li><a href="/clinicas" className="hover:text-doctoralia-teal transition">Recurso para centros</a></li>
                             </ul>
                         </div>
                         <div>
                             <h5 className="font-bold text-gray-900 mb-6 text-sm uppercase tracking-widest">Legal</h5>
                             <ul className="space-y-4 text-sm text-gray-600">
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Privacidad</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Términos de uso</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Cookies</a></li>
-                                <li><a href="#" className="hover:text-doctoralia-teal transition">Accesibilidad</a></li>
+                                <li><a href="/privacy" className="hover:text-doctoralia-teal transition">Privacidad</a></li>
+                                <li><a href="/terms" className="hover:text-doctoralia-teal transition">Términos de uso</a></li>
+                                <li><a href="/privacy#cookies" className="hover:text-doctoralia-teal transition">Cookies</a></li>
+                                <li><a href="/terms#accessibility" className="hover:text-doctoralia-teal transition">Accesibilidad</a></li>
                             </ul>
                         </div>
                     </div>

@@ -28,6 +28,9 @@ export interface DayAvailability {
   slots: string[]; // Array of time strings like "09:00", "10:30"
 }
 
+export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled';
+export type AppointmentMode = 'online' | 'in_person';
+
 export interface SearchFilters {
   specialty: string;
   location: string;
@@ -35,8 +38,13 @@ export interface SearchFilters {
 }
 
 export interface Appointment {
+  id: string;
   doctorId: string;
   patientName: string;
   dateTime: string;
-  status: 'pending' | 'confirmed';
+  status: AppointmentStatus;
+  mode: AppointmentMode;
+  reason?: string;
+  location?: string;
+  videoLink?: string;
 }

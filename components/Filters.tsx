@@ -61,7 +61,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-doctoralia-teal to-teal-600 rounded-2xl p-6 text-white shadow-lg">
+      <div className="bg-gradient-to-br from-doctoralia-teal to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
         <h5 className="font-bold text-lg mb-2">¿Eres un profesional?</h5>
         <p className="text-teal-50 text-sm mb-4">Únete a la mayor plataforma de salud y haz crecer tu consulta.</p>
         <button className="w-full bg-white text-doctoralia-teal font-bold py-3 rounded-xl hover:bg-teal-50 transition shadow-md">

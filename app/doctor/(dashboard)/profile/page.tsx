@@ -74,7 +74,7 @@ export default function DoctorProfilePage() {
                 {!isEditing ? (
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#00af94] transition shadow-lg shadow-teal-100"
+                        className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#059669] transition shadow-lg shadow-teal-100"
                     >
                         <Edit3 className="w-5 h-5" />
                         Editar perfil
@@ -90,7 +90,7 @@ export default function DoctorProfilePage() {
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#00af94] transition shadow-lg shadow-teal-100"
+                            className="flex items-center gap-2 bg-doctoralia-teal text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#059669] transition shadow-lg shadow-teal-100"
                         >
                             <Save className="w-5 h-5" />
                             Guardar cambios
@@ -102,7 +102,7 @@ export default function DoctorProfilePage() {
             {/* Profile Card */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                 {/* Cover & Photo */}
-                <div className="relative h-32 bg-gradient-to-r from-doctoralia-teal to-teal-600">
+                <div className="relative h-32 bg-gradient-to-r from-doctoralia-teal to-emerald-600">
                     <div className="absolute -bottom-12 left-8">
                         <div className="relative">
                             <img

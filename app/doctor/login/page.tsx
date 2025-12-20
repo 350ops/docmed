@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { login } from "@/lib/doctor-auth";
-import { Search, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+import { Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 
 export default function DoctorLoginPage() {
     const router = useRouter();
@@ -30,17 +31,21 @@ export default function DoctorLoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#f0f9f8] via-white to-teal-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-[#ecfdf5] via-white to-emerald-50 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <a href="/" className="inline-flex items-center gap-2">
-                        <div className="w-12 h-12 bg-doctoralia-teal rounded-xl flex items-center justify-center shadow-lg shadow-teal-100">
-                            <Search className="text-white w-7 h-7" />
+                    <a href="/" className="inline-flex items-center justify-center">
+                        <div className="relative w-32 h-16">
+                            <Image 
+                                src="/logo.png" 
+                                alt="care salud" 
+                                width={128} 
+                                height={64} 
+                                className="object-contain"
+                                priority
+                            />
                         </div>
-                        <span className="text-3xl font-black text-gray-900 tracking-tighter">
-                            care<span className="text-doctoralia-teal">salud</span>
-                        </span>
                     </a>
                     <p className="mt-4 text-gray-500 font-medium">Portal para profesionales</p>
                 </div>
@@ -100,7 +105,7 @@ export default function DoctorLoginPage() {
                                 />
                                 <span className="text-gray-600">Recordarme</span>
                             </label>
-                            <a href="#" className="text-doctoralia-teal font-semibold hover:underline">
+                            <a href="mailto:soporte@doctorconnect.es?subject=Recuperar%20contrase%C3%B1a" className="text-doctoralia-teal font-semibold hover:underline">
                                 ¿Olvidaste tu contraseña?
                             </a>
                         </div>
@@ -108,7 +113,7 @@ export default function DoctorLoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-doctoralia-teal text-white py-4 rounded-xl font-bold text-lg hover:bg-[#00af94] transition-all shadow-lg shadow-teal-100 disabled:opacity-70 flex items-center justify-center gap-2"
+                            className="w-full bg-doctoralia-teal text-white py-4 rounded-xl font-bold text-lg hover:bg-[#059669] transition-all shadow-lg shadow-teal-100 disabled:opacity-70 flex items-center justify-center gap-2"
                         >
                             {isLoading ? (
                                 <>
@@ -124,7 +129,7 @@ export default function DoctorLoginPage() {
                     <div className="mt-8 pt-6 border-t border-gray-100 text-center">
                         <p className="text-gray-500 text-sm">
                             ¿No tienes cuenta?{" "}
-                            <a href="#" className="text-doctoralia-teal font-semibold hover:underline">
+                            <a href="/doctor/login?action=register" className="text-doctoralia-teal font-semibold hover:underline">
                                 Regístrate como profesional
                             </a>
                         </p>

@@ -109,7 +109,7 @@ const DocBot: React.FC = () => {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-doctoralia-teal text-white p-4 rounded-2xl hover:bg-[#00af94] disabled:opacity-50 transition-all shadow-lg shadow-teal-100 active:scale-95"
+                className="bg-doctoralia-teal text-white p-4 rounded-2xl hover:bg-[#059669] disabled:opacity-50 transition-all shadow-lg shadow-teal-100 active:scale-95"
               >
                 <Send className="w-5 h-5" />
               </button>
