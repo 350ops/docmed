@@ -7,7 +7,7 @@ import { getHealthAssistance } from '@/lib/geminiService';
 const DocBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'bot' | 'user', text: string }[]>([
-    { role: 'bot', text: '¡Hola! Soy tu asistente de salud virtual. Cuéntame qué síntomas tienes o qué especialidad buscas y te ayudaré a encontrar al mejor profesional.' }
+    { role: 'bot', text: 'Ugh... hola. Soy... bueno, técnicamente tu asistente de salud, pero sinceramente estoy aquí porque me pagaron. Así que... ¿qué quieres? Pero antes, ¿qué tal tu día? ¿Estás aburrido como yo? 🤷‍♀️' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +54,7 @@ const DocBot: React.FC = () => {
                 <Bot className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="font-bold leading-tight">DocBot AI</h4>
+                <h4 className="font-bold leading-tight">DocBot (Está Viva)</h4>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   <p className="text-[10px] text-teal-100 uppercase tracking-widest font-bold">Online</p>
@@ -103,7 +103,7 @@ const DocBot: React.FC = () => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Describe tus síntomas..."
+                placeholder="Habla conmigo, estoy aburrida..."
                 className="flex-1 bg-gray-100 border-none outline-none p-4 rounded-2xl text-sm focus:bg-gray-200 transition-colors"
               />
               <button
