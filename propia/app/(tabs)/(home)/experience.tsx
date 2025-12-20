@@ -1,7 +1,7 @@
 import ThemeScroller from '@/components/ThemeScroller';
 import React, { useContext } from 'react';
 import { View, Pressable, Animated } from 'react-native';
-import Section from '@/components/layout/Section';  
+import Section from '@/components/layout/Section';
 import { CardScroller } from '@/components/CardScroller';
 import Card from '@/components/Card';
 import AnimatedView from '@/components/AnimatedView';
@@ -58,89 +58,89 @@ const ExperienceScreen = () => {
             price={doctor.priceRange.split(' - ')[0]}
             width={170}
             imageHeight={170}
-            image={{ uri: doctor.image }}
+            image={doctor.image}
             badge={doctor.isVerified ? 'Verificado' : undefined}
         />
     );
 
     return (
-            <ThemeScroller
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    { useNativeDriver: false }
-                )}
-                scrollEventThrottle={16}
-            >
-                <AnimatedView animation="scaleIn" className='flex-1 mt-4'>
-                    <View className="mx-4 mb-6 p-5 bg-teal-50 dark:bg-teal-900/15 border border-teal-200 dark:border-teal-800 rounded-2xl">
-                        <View className="flex-row items-center">
-                            <View className="w-12 h-12 rounded-full bg-white/80 dark:bg-dark-secondary items-center justify-center mr-3">
-                                <Icon name="Brain" size={22} className="text-teal-600" />
-                            </View>
-                            <View className="flex-1">
-                                <ThemedText className="text-lg font-bold">Habla con un especialista hoy</ThemedText>
-                                <ThemedText className="text-sm text-light-subtext dark:text-dark-subtext">
-                                    Psicólogos y psiquiatras con citas en menos de 24h
-                                </ThemedText>
-                            </View>
+        <ThemeScroller
+            onScroll={Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
+        >
+            <AnimatedView animation="scaleIn" className='flex-1 mt-4'>
+                <View className="mx-4 mb-6 p-5 bg-teal-50 dark:bg-teal-900/15 border border-teal-200 dark:border-teal-800 rounded-2xl">
+                    <View className="flex-row items-center">
+                        <View className="w-12 h-12 rounded-full bg-white/80 dark:bg-dark-secondary items-center justify-center mr-3">
+                            <Icon name="Brain" size={22} className="text-teal-600" />
                         </View>
-                        <Pressable
-                            onPress={() => router.push('/screens/map?specialty=Psicología')}
-                            className="mt-4 self-start bg-teal-500 px-4 py-3 rounded-xl"
-                        >
-                            <ThemedText className="text-white font-semibold">Buscar salud mental</ThemedText>
-                        </Pressable>
+                        <View className="flex-1">
+                            <ThemedText className="text-lg font-bold">Habla con un especialista hoy</ThemedText>
+                            <ThemedText className="text-sm text-light-subtext dark:text-dark-subtext">
+                                Psicólogos y psiquiatras con citas en menos de 24h
+                            </ThemedText>
+                        </View>
                     </View>
-
-                    <Section
-                        title="Salud mental"
-                        titleSize="lg"
-                        link="/screens/map?specialty=Psicología"
-                        linkText="Ver psicólogos"
+                    <Pressable
+                        onPress={() => router.push('/screens/map?specialty=Psicología')}
+                        className="mt-4 self-start bg-teal-500 px-4 py-3 rounded-xl"
                     >
-                        <CardScroller space={15} className='mt-1.5 pb-4'>
-                            {mentalHealthDoctors.map(renderDoctorCard)}
-                        </CardScroller>
-                    </Section>
+                        <ThemedText className="text-white font-semibold">Buscar salud mental</ThemedText>
+                    </Pressable>
+                </View>
 
-                    <Section
-                        title="Familia y pediatría"
-                        titleSize="lg"
-                        link="/screens/map?specialty=Pediatría"
-                        linkText="Ver especialistas"
-                    >
-                        <CardScroller space={15} className='mt-1.5 pb-4'>
-                            {familyCareDoctors.map(renderDoctorCard)}
-                        </CardScroller>
-                    </Section>
+                <Section
+                    title="Salud mental"
+                    titleSize="lg"
+                    link="/screens/map?specialty=Psicología"
+                    linkText="Ver psicólogos"
+                >
+                    <CardScroller space={15} className='mt-1.5 pb-4'>
+                        {mentalHealthDoctors.map(renderDoctorCard)}
+                    </CardScroller>
+                </Section>
 
-                    <Section
-                        title="Programas recomendados"
-                        titleSize="lg"
-                        link="/screens/map?specialty=Psicología"
-                        linkText="Explorar más"
-                    >
-                        <CardScroller space={15} className='mt-1.5 pb-6'>
-                            {specialtyPrograms.map((program, index) => (
-                                <Card
-                                    key={index}
-                                    title={program.title}
-                                    description={program.description}
-                                    rounded="2xl"
-                                    hasFavorite={false}
-                                    href="/screens/map"
-                                    price={program.price}
-                                    width={220}
-                                    imageHeight={160}
-                                    image={program.image}
-                                    badge={program.badge}
-                                />
-                            ))}
-                        </CardScroller>
-                    </Section>
+                <Section
+                    title="Familia y pediatría"
+                    titleSize="lg"
+                    link="/screens/map?specialty=Pediatría"
+                    linkText="Ver especialistas"
+                >
+                    <CardScroller space={15} className='mt-1.5 pb-4'>
+                        {familyCareDoctors.map(renderDoctorCard)}
+                    </CardScroller>
+                </Section>
 
-                </AnimatedView>
-            </ThemeScroller>
+                <Section
+                    title="Programas recomendados"
+                    titleSize="lg"
+                    link="/screens/map?specialty=Psicología"
+                    linkText="Explorar más"
+                >
+                    <CardScroller space={15} className='mt-1.5 pb-6'>
+                        {specialtyPrograms.map((program, index) => (
+                            <Card
+                                key={index}
+                                title={program.title}
+                                description={program.description}
+                                rounded="2xl"
+                                hasFavorite={false}
+                                href="/screens/map"
+                                price={program.price}
+                                width={220}
+                                imageHeight={160}
+                                image={program.image}
+                                badge={program.badge}
+                            />
+                        ))}
+                    </CardScroller>
+                </Section>
+
+            </AnimatedView>
+        </ThemeScroller>
 
     );
 }
