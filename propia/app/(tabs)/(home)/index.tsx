@@ -108,7 +108,7 @@ const HomeScreen = () => {
                                 price={doctor.priceRange.split(' - ')[0]}
                                 width={180}
                                 imageHeight={180}
-                                image={{ uri: doctor.image }}
+                                image={doctor.image}
                             />
                         ))}
                     </CardScroller>

@@ -122,7 +122,7 @@ const DoctorDetail = () => {
                 {/* Doctor Image */}
                 <View className="h-[350px] relative">
                     <Image
-                        source={{ uri: doctor.image }}
+                        source={doctor.image}
                         className="w-full h-full"
                         resizeMode="cover"
                     />
