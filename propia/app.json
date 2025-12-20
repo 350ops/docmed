@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "newArchEnabled": true,
+    "name": "CareSalud",
+    "slug": "caresalud",
+    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "scheme": "caresalud",
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00C3A5"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.caresalud.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#00C3A5"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "predictiveBackGestureEnabled": false,
+      "package": "com.caresalud.app",
+      "config": {
+        "enableOnBackInvokedCallback": false
+      }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "468a36ea-a6ac-4eea-85b6-e5ffc2d30c32"
+      }
+    }
+  }
+}

@@ -1,20 +1,55 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# CareSalud iOS App
 
-# Run and deploy your AI Studio app
+CareSalud mobile application built with Expo and React Native.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1qDVIwawx7UY3tp6GzBRw1KPYdsgEJ5hQ
+- Built with Expo, React Native & NativeWind
+- Dark/light mode support
+- Fully customizable components
+- TypeScript support
+- iOS and Android compatible
 
-## Run Locally
+## Getting Started
 
-**Prerequisites:**  Node.js
+```bash
+# Use Node.js v20
+nvm use 20
 
+# Install dependencies
+cd propia
+npm install
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# Handle peer dependency issues
+npm install --legacy-peer-deps
+
+# Start the Expo development server with a clean cache
+npx expo start -c
+```
+
+## Deployment
+
+This app is configured for deployment with Expo Launch (EAS).
+
+### Build for iOS
+
+```bash
+cd propia
+eas build --platform ios
+```
+
+### Build for Android
+
+```bash
+cd propia
+eas build --platform android
+```
+
+## Project Structure
+
+The iOS app code is located in the `propia/` directory.
+
+## License
+
+Private - CareSalud Spain S.L.
+
