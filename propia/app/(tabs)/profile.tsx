@@ -6,7 +6,7 @@ import Avatar from '@/components/Avatar';
 import ListLink from '@/components/ListLink';
 import AnimatedView from '@/components/AnimatedView';
 import ThemedScroller from '@/components/ThemeScroller';
-import {Button} from '@/components/Button';
+import { Button } from '@/components/Button';
 import BusinessSwitch from '@/components/BusinessSwitch';
 import React from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -77,38 +77,38 @@ const PersonalProfile = () => {
         <AnimatedView className='pt-4' animation='scaleIn'>
             <View style={{ ...shadowPresets.large }} className="flex-row  items-center justify-center mb-4 bg-light-primary dark:bg-dark-secondary rounded-3xl p-10">
                 <View className='flex-col items-center w-1/2'>
-                    <Avatar src={require('@/assets/img/thomino.jpg')} size="xxl" />
+                    <Avatar src={require('@/assets/img/michael.png')} size="xxl" />
                     <View className="flex-1 items-center justify-center">
-                        <ThemedText className="text-2xl font-bold">Thomino</ThemedText>
+                        <ThemedText className="text-2xl font-bold">Michael Light</ThemedText>
                         <View className='flex flex-row items-center'>
-                            <ThemedText className='text-sm text-light-subtext dark:text-dark-subtext ml-2'>Bratislava, Slovakia</ThemedText>
+                            <ThemedText className='text-sm text-light-subtext dark:text-dark-subtext ml-2'>Madrid, España</ThemedText>
                         </View>
                     </View>
                 </View>
                 <View className='flex-col items-start justify-center w-1/2 pl-12'>
                     <View className='w-full'>
-                        <ThemedText className="text-xl font-bold">16</ThemedText>
-                        <ThemedText className="text-xs">Trips</ThemedText>
+                        <ThemedText className="text-xl font-bold">5</ThemedText>
+                        <ThemedText className="text-xs">Consultas</ThemedText>
                     </View>
                     <View className='w-full py-3 my-3 border-y border-neutral-300 dark:border-dark-primary'>
-                        <ThemedText className="text-xl font-bold">10</ThemedText>
-                        <ThemedText className="text-xs">Reviews</ThemedText>
+                        <ThemedText className="text-xl font-bold">3</ThemedText>
+                        <ThemedText className="text-xs">Opiniones</ThemedText>
                     </View>
                     <View className='w-full'>
-                        <ThemedText className="text-xl font-bold">11</ThemedText>
-                        <ThemedText className="text-xs">Years</ThemedText>
+                        <ThemedText className="text-xl font-bold">1</ThemedText>
+                        <ThemedText className="text-xs">Años</ThemedText>
                     </View>
                 </View>
 
             </View>
 
             <Pressable onPress={() => router.push('/screens/add-property-start')} style={{ ...shadowPresets.large }} className='p-5 mb-4 flex flex-row items-center rounded-2xl bg-light-primary dark:bg-dark-secondary'>
-                <Image className='w-10 h-10 mr-4' source={require('@/assets/img/house.png')} />
-                <View>
-                    <ThemedText className='text-base font-medium flex-1 pr-2'>
+                <Image className='w-10 h-10 mr-4 flex-shrink-0' source={require('@/assets/img/house.png')} />
+                <View className='flex-1 flex-shrink'>
+                    <ThemedText className='text-base font-medium'>
                         Publica tu consulta
                     </ThemedText>
-                    <ThemedText className="text-xs opacity-60">Activa el modo doctor y empieza a recibir pacientes</ThemedText>
+                    <ThemedText className="text-xs opacity-60" numberOfLines={2}>Activa modo doctor y recibe pacientes</ThemedText>
                 </View>
 
             </Pressable>

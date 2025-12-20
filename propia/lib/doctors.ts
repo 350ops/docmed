@@ -1,6 +1,8 @@
 // CareSalud - Mock Doctor Data
 // Adapted from web app for mobile
 
+import { ImageSourcePropType } from 'react-native';
+
 export interface DayAvailability {
     date: string;
     slots: string[];
@@ -15,7 +17,7 @@ export interface Doctor {
     rating: number;
     reviewCount: number;
     priceRange: string;
-    image: string;
+    image: string | ImageSourcePropType;
     insurances: string[];
     bio: string;
     availability: DayAvailability[];
@@ -218,6 +220,86 @@ export const MOCK_DOCTORS: Doctor[] = [
         languages: ['Español'],
         education: 'Universidad Complutense de Madrid - Medicina Familiar',
         experience: 20
+    },
+    {
+        id: '9',
+        name: 'Dra. María Fernández Vega',
+        specialty: 'Dermatología',
+        location: 'Gràcia, Barcelona',
+        city: 'Barcelona',
+        rating: 4.9,
+        reviewCount: 287,
+        priceRange: '75€ - 110€',
+        image: require('@/assets/img/doctor_maria.png'),
+        insurances: ['Sanitas', 'Adeslas', 'DKV', 'Caser'],
+        bio: 'Dermatóloga especializada en dermatología estética y tratamiento del acné. Experta en peelings químicos, botox y tratamientos láser para rejuvenecimiento facial.',
+        availability: generateWeeklyAvailability(),
+        isVerified: true,
+        address: 'Carrer Gran de Gràcia, 85, 08012 Barcelona',
+        coordinates: { lat: 41.4023, lng: 2.1560 },
+        languages: ['Español', 'Catalán', 'Inglés'],
+        education: 'Universidad de Barcelona - Especialidad en Dermatología',
+        experience: 8
+    },
+    {
+        id: '10',
+        name: 'Dra. Carla Ruiz Martínez',
+        specialty: 'Psicología',
+        location: 'Chamberí, Madrid',
+        city: 'Madrid',
+        rating: 4.8,
+        reviewCount: 356,
+        priceRange: '65€ - 95€',
+        image: require('@/assets/img/doctor_carla.png'),
+        insurances: ['Mapfre', 'Sanitas', 'Adeslas', 'Asisa'],
+        bio: 'Psicóloga clínica especializada en trastornos de ansiedad, depresión y terapia de pareja. Enfoque integrador combinando terapia cognitivo-conductual y mindfulness.',
+        availability: generateWeeklyAvailability(),
+        isVerified: true,
+        address: 'Calle Alonso Cano, 23, 28003 Madrid',
+        coordinates: { lat: 40.4389, lng: -3.7012 },
+        languages: ['Español', 'Inglés', 'Italiano'],
+        education: 'Universidad Autónoma de Madrid - Máster en Psicología Clínica',
+        experience: 11
+    },
+    {
+        id: '11',
+        name: 'Dra. Lucía Santos García',
+        specialty: 'Pediatría',
+        location: 'Triana, Sevilla',
+        city: 'Sevilla',
+        rating: 4.9,
+        reviewCount: 412,
+        priceRange: '55€ - 85€',
+        image: require('@/assets/img/doctor_lucia.png'),
+        insurances: ['Adeslas', 'Sanitas', 'AXA', 'DKV'],
+        bio: 'Pediatra con especial dedicación a la lactancia materna, desarrollo infantil y vacunación. Atención cálida y cercana para los más pequeños de la familia.',
+        availability: generateWeeklyAvailability(),
+        isVerified: true,
+        address: 'Calle San Jacinto, 45, 41010 Sevilla',
+        coordinates: { lat: 37.3826, lng: -6.0067 },
+        languages: ['Español', 'Inglés'],
+        education: 'Universidad de Sevilla - Especialidad en Pediatría',
+        experience: 13
+    },
+    {
+        id: '12',
+        name: 'Dra. Ana Vidal Romero',
+        specialty: 'Ginecología',
+        location: 'Ensanche, Valencia',
+        city: 'Valencia',
+        rating: 4.7,
+        reviewCount: 198,
+        priceRange: '60€ - 100€',
+        image: require('@/assets/img/doctor_ana.png'),
+        insurances: ['Caser', 'Adeslas', 'Mapfre', 'Sanitas'],
+        bio: 'Ginecóloga con enfoque en salud reproductiva, control de embarazo y menopausia. Ecografías 3D/4D y seguimiento personalizado de cada paciente.',
+        availability: generateWeeklyAvailability(),
+        isVerified: true,
+        address: 'Calle Colón, 72, 46004 Valencia',
+        coordinates: { lat: 39.4680, lng: -0.3756 },
+        languages: ['Español', 'Valenciano', 'Inglés', 'Francés'],
+        education: 'Universidad de Valencia - Especialidad en Ginecología y Obstetricia',
+        experience: 9
     }
 ];
 
