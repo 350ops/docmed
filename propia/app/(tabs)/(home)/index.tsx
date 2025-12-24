@@ -16,15 +16,14 @@ import SearchBar from '@/components/SearchBar';
 
 // Popular specialties
 const POPULAR_SPECIALTIES = [
-    'Psiquiatría',
+    'Alergología',
     'Anestesiología',
     'Angiología y Cirugía Vascular',
     'Cardiología',
     'Medicina General',
     'Pediatría',
+    'Psiquiatría',
     'Urología',
-
-
 ];
 
 const HomeScreen = () => {

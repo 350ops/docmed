@@ -81,7 +81,7 @@ export const Section: React.FC<SectionProps> = ({
                         {header || (
                             <>
                                 {title && (
-                                    <View className='flex-row items-center w-full justify-start'>
+                                    <View className={`flex-row items-center w-full ${className.includes('items-center') ? 'justify-center' : 'justify-start'}`}>
                                         <ThemedText className={`${getTitleClass()} font-semibold`}>
                                             {title}
                                         </ThemedText>

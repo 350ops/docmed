@@ -105,17 +105,15 @@ const SearchModal = ({ showModal, setShowModal }: { showModal: boolean, setShowM
                     </AnimatedView>
                 </BlurView>
             </Modal>
-            {
-                isSearching && (
-                    <CatLauncher
-                        launchType="search"
-                        onAnimationComplete={() => {
-                            setIsSearching(false);
-                            router.push(`/screens/map?q=${searchQuery}`);
-                        }}
-                    />
-                )
-            }
+            {isSearching && (
+                <CatLauncher
+                    launchType="search"
+                    onAnimationComplete={() => {
+                        setIsSearching(false);
+                        router.push(`/screens/map?q=${searchQuery}`);
+                    }}
+                />
+            )}
         </>
     );
 };
@@ -223,7 +221,7 @@ const LocationSearch = () => {
 
 // Insurance search component
 const InsuranceSearch = () => {
-    const insurances = ['Sanitas', 'Adeslas', 'Mapfre', 'Asisa', 'DKV', 'Caser', 'AXA'];
+    const insurances = ['Sanitas', 'Adeslas', 'Mapfre', 'Asisa', 'DKV', 'Caser', 'AXA', 'Ninguna'];
     return (
         <>
             <ThemedText className='text-xs mt-4 text-light-subtext dark:text-dark-subtext'>Selecciona tu seguro</ThemedText>
