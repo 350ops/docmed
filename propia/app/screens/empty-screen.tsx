@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Header from '@/components/Header';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import ThemedScroller from '@/components/ThemeScroller';
 import ThemedFooter from '@/components/ThemeFooter';
 

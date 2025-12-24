@@ -5,7 +5,7 @@ import Input from '@/components/forms/Input';
 import ThemedText from '@/components/ThemedText';
 import { Button } from '@/components/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import Header from '@/components/Header';
 
 export default function LoginScreen() {

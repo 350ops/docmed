@@ -8,7 +8,7 @@ import Input from '@/components/forms/Input';
 import Toggle from '@/components/Toggle';
 import { shadowPresets } from '@/utils/useShadow';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import Section from '@/components/layout/Section';
 import { CardScroller } from '@/components/CardScroller';
 import { LinearGradient } from 'expo-linear-gradient';

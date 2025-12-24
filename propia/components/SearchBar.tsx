@@ -4,7 +4,7 @@ import Icon from "./Icon";
 import ThemedText from "./ThemedText";
 import { Link } from "expo-router";
 import React, { useState, useEffect } from "react";
-import useThemeColors from "@/app/contexts/ThemeColors";
+import useThemeColors from "@/contexts/ThemeColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { TextInput } from "react-native-gesture-handler";

@@ -8,7 +8,7 @@ import { Chip } from '@/components/Chip';
 import { CardScroller } from '@/components/CardScroller';
 import AnimatedView from '@/components/AnimatedView';
 import Header from '@/components/Header';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 
 type OrderStatus = 'all' | 'pending' | 'completed' | 'canceled';
 

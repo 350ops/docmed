@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import ThemedText from './ThemedText';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import CatLauncher from './CatLauncher';
 
 interface PageLoaderProps {

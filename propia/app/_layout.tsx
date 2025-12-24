@@ -2,11 +2,11 @@ import '../global.css';
 import React from 'react';
 import { Stack } from 'expo-router';
 import { NativeWindStyleSheet } from 'nativewind';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import useThemedNavigation from './hooks/useThemedNavigation';
+import useThemedNavigation from '../hooks/useThemedNavigation';
 import { Platform } from 'react-native';
-import { BusinessModeProvider } from './contexts/BusinesModeContext';
+import { BusinessModeProvider } from '../contexts/BusinesModeContext';
 
 
 NativeWindStyleSheet.setOutput({

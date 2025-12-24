@@ -3,7 +3,7 @@ import { View, TextInput, FlatList, TouchableOpacity, KeyboardAvoidingView, Plat
 import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
 import ActionSheet, { ActionSheetRef } from 'react-native-actions-sheet';
-import { useThemeColors } from '@/app/contexts/ThemeColors';
+import { useThemeColors } from '@/contexts/ThemeColors';
 import Header, { HeaderIcon } from '@/components/Header';
 import Avatar from '@/components/Avatar';
 import ThemedText from '@/components/ThemedText';

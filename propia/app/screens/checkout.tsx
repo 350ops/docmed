@@ -7,7 +7,7 @@ import Icon, { IconName } from '@/components/Icon';
 import MultiStep, { Step } from '@/components/MultiStep';
 import Section from '@/components/layout/Section';
 import Selectable from '@/components/forms/Selectable';
-import useThemeColors from '../contexts/ThemeColors';
+import useThemeColors from '../../contexts/ThemeColors';
 import ShowRating from '@/components/ShowRating';
 import { MOCK_DOCTORS } from '@/lib/doctors';
 

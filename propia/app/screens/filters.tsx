@@ -11,7 +11,7 @@ import { Chip } from '@/components/Chip';
 import Switch from '@/components/forms/Switch';
 import { Button } from '@/components/Button';
 import { SPECIALTIES, INSURANCES } from '@/lib/doctors';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 
 const CITIES = ['Madrid', 'Barcelona', 'Valencia', 'Sevilla'];
 

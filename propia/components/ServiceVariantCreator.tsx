@@ -3,7 +3,7 @@ import { View, Pressable, Modal, FlatList, ScrollView, Keyboard, Alert, Text, Te
 import Icon, { IconName } from './Icon';
 import Input from './forms/Input';
 import ThemedText from './ThemedText';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import { Button } from './Button';
 
 interface ServiceVariantCreatorProps {

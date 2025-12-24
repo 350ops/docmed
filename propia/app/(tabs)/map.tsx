@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { MOCK_DOCTORS, Doctor } from '@/lib/doctors';
 import ThemedText from '@/components/ThemedText';
 import Icon from '@/components/Icon';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import Card from '@/components/Card';
 import Header from '@/components/Header';
 

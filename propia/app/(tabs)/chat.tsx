@@ -8,7 +8,7 @@ import AnimatedView from '@/components/AnimatedView';
 import { Chip } from '@/components/Chip';
 import { CardScroller } from '@/components/CardScroller';
 import Section from '@/components/layout/Section';
-import { useCollapsibleTitle } from '@/app/hooks/useCollapsibleTitle';
+import { useCollapsibleTitle } from '@/hooks/useCollapsibleTitle';
 
 import { ChatUser, mockChats } from '@/lib/chats';
 

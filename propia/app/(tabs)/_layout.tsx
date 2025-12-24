@@ -1,5 +1,5 @@
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useBusinessMode } from '@/app/contexts/BusinesModeContext';
+import { useBusinessMode } from '@/contexts/BusinesModeContext';
 
 export default function Layout() {
   const { isBusinessMode } = useBusinessMode();

@@ -5,7 +5,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import { Button } from '@/components/Button';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import Input from '@/components/forms/Input';
 import ThemedScroller from '@/components/ThemeScroller';
 import ThemedFooter from '@/components/ThemeFooter';

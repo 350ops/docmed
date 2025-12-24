@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Image, Pressable } from 'react-native';
 import MapView from 'react-native-maps';
 import ActionSheet, { ActionSheetRef, FlatList } from 'react-native-actions-sheet';
-import useThemeColors from '@/app/contexts/ThemeColors';
+import useThemeColors from '@/contexts/ThemeColors';
 import Header, { HeaderIcon } from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import SearchBar from '@/components/SearchBar';

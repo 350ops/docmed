@@ -14,7 +14,7 @@ import AnimatedView from '@/components/AnimatedView';
 import Header, { HeaderIcon } from '@/components/Header';
 import Card from '@/components/Card';
 import Icon from '@/components/Icon';
-import { useCollapsibleTitle } from '@/app/hooks/useCollapsibleTitle';
+import { useCollapsibleTitle } from '@/hooks/useCollapsibleTitle';
 
 
 import { MOCK_DOCTORS } from '@/lib/doctors';

@@ -4,7 +4,7 @@ import ThemedText from '@/components/ThemedText';
 import { StatusBar } from 'expo-status-bar';
 import ThemeToggle from '@/components/ThemeToggle';
 import { AntDesign } from '@expo/vector-icons';
-import useThemeColors from '../contexts/ThemeColors';
+import useThemeColors from '../../contexts/ThemeColors';
 import { router } from 'expo-router';
 import React from 'react';
 import Icon from '@/components/Icon';
